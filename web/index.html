@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sistem Rekomendasi Tanaman Cerdas - AgriAI</title>
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <!-- FontAwesome for Icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="app-container">
+            <!-- Sidebar Controls -->
+            <aside class="sidebar">
+                <div class="brand">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h1>AgriAI</h1>
+                        <span>Smart Crop Recommendation</span>
+                    </div>
+                </div>
+
+                <div class="section-title">Presets Lahan</div>
+                <div class="presets-grid">
+                    <button class="preset-btn" onclick="applyPreset('padi')">
+                        <span class="preset-icon"
+                            ><i
+                                data-lucide="droplets"
+                                style="color: var(--accent-green)"
+                            ></i
+                        ></span>
+                        <span class="preset-name">Sawah Basah</span>
+                    </button>
+                    <button class="preset-btn" onclick="applyPreset('kering')">
+                        <span class="preset-icon"
+                            ><i
+                                data-lucide="sun"
+                                style="color: var(--n-color)"
+                            ></i
+                        ></span>
+                        <span class="preset-name">Lahan Arid</span>
+                    </button>
+                    <button class="preset-btn" onclick="applyPreset('dingin')">
+                        <span class="preset-icon"
+                            ><i
+                                data-lucide="mountain"
+                                style="color: var(--k-color)"
+                            ></i
+                        ></span>
+                        <span class="preset-name">Dataran Tinggi</span>
+                    </button>
+                    <button class="preset-btn" onclick="applyPreset('buah')">
+                        <span class="preset-icon"
+                            ><i
+                                data-lucide="grape"
+                                style="color: var(--temp-color)"
+                            ></i
+                        ></span>
+                        <span class="preset-name">Kebun Grapes/Apple</span>
+                    </button>
+                </div>
+
+                <div class="section-title">Parameter Agronomi</div>
+
+                <div class="input-group">
+                    <div class="input-header">
+                        <label for="input-N"
+                            ><span class="nutrient-badge n-badge">N</span>
+                            Nitrogen</label
+                        >
+                        <span class="val-display" id="val-N">90</span>
+                    </div>
+                    <input
+                        type="range"
+                        id="input-N"
+                        min="0"
+                        max="150"
+                        value="90"
+                        step="1"
+                        oninput="updateValue('N', this.value)"
+                    />
+                </div>
+
+                <div class="input-group">
+                    <div class="input-header">
+                        <label for="input-P"
+                            ><span class="nutrient-badge p-badge">P</span>
+                            Fosfor</label
+                        >
+                        <span class="val-display" id="val-P">42</span>
+                    </div>
+                    <input
+                        type="range"
+                        id="input-P"
+                        min="5"
+                        max="145"
+                        value="42"
+                        step="1"
+                        oninput="updateValue('P', this.value)"
+                    />
+                </div>
+
+                <div class="input-group">
+                    <div class="input-header">
+                        <label for="input-K"
+                            ><span class="nutrient-badge k-badge">K</span>
+                            Kalium</label
+                        >
+                        <span class="val-display" id="val-K">43</span>
+                    </div>
+                    <input
+                        type="range"
+                        id="input-K"
+                        min="5"
+                        max="205"
+                        value="43"
+                        step="1"
+                        oninput="updateValue('K', this.value)"
+                    />
+                </div>
+
+                <div class="input-group">
+                    <div class="input-header">
+                        <label for="input-temp"
+                            ><i
+                                class="fa-solid fa-temperature-half icon-temp"
+                            ></i>
+                            Temperatur</label
+                        >
+                        <span class="val-display" id="val-temp">25.0 °C</span>
+                    </div>
+                    <input
+                        type="range"
+                        id="input-temp"
+                        min="8"
+                        max="45"
+                        value="25.0"
+                        step="0.1"
+                        oninput="updateValue('temp', this.value)"
+                    />
+                </div>
+
+                <div class="input-group">
+                    <div class="input-header">
+                        <label for="input-humidity"
+                            ><i class="fa-solid fa-droplet icon-humidity"></i>
+                            Kelembaban</label
+                        >
+                        <span class="val-display" id="val-humidity">80 %</span>
+                    </div>
+                    <input
+                        type="range"
+                        id="input-humidity"
+                        min="14"
+                        max="100"
+                        value="80"
+                        step="1"
+                        oninput="updateValue('humidity', this.value)"
+                    />
+                </div>
+
+                <div class="input-group">
+                    <div class="input-header">
+                        <label for="input-ph"
+                            ><i class="fa-solid fa-gauge icon-ph"></i> pH
+                            Tanah</label
+                        >
+                        <span class="val-display" id="val-ph">6.5</span>
+                    </div>
+                    <input
+                        type="range"
+                        id="input-ph"
+                        min="3.5"
+                        max="9.9"
+                        value="6.5"
+                        step="0.1"
+                        oninput="updateValue('ph', this.value)"
+                    />
+                </div>
+
+                <div class="input-group">
+                    <div class="input-header">
+                        <label for="input-rainfall"
+                            ><i
+                                class="fa-solid fa-cloud-showers-heavy icon-rainfall"
+                            ></i>
+                            Curah Hujan</label
+                        >
+                        <span class="val-display" id="val-rainfall"
+                            >150 mm</span
+                        >
+                    </div>
+                    <input
+                        type="range"
+                        id="input-rainfall"
+                        min="20"
+                        max="300"
+                        value="150"
+                        step="1"
+                        oninput="updateValue('rainfall', this.value)"
+                    />
+                </div>
+            </aside>
+
+            <!-- Main Content Panel -->
+            <main class="main-panel">
+                <header class="top-nav">
+                    <div class="nav-title">
+                        Dashboard Analisis Lahan & Rekomendasi Tanaman
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px">
+                        <div class="badge-restricted">
+                            <i class="fa-solid fa-circle-check"></i> Project
+                            Machine Learning
+                        </div>
+                        <a
+                            href="login.html"
+                            class="logout-link"
+                            title="Keluar dari Akun"
+                        >
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </a>
+                    </div>
+                </header>
+
+                <div class="dashboard-grid">
+                    <!-- Cluster Prediction Result Card -->
+                    <div class="card result-card">
+                        <div class="card-glow"></div>
+                        <div class="card-content">
+                            <div class="result-meta">
+                                <span class="badge-live"
+                                    ><span class="dot"></span> Real-Time K-Means
+                                    Inference</span
+                                >
+                                <h3>Klaster Lahan Terdeteksi</h3>
+                            </div>
+                            <div class="result-val">
+                                <span class="cluster-id" id="display-cluster-id"
+                                    >-</span
+                                >
+                                <div class="suitability-box">
+                                    <span class="suitability-label"
+                                        >Kondisi Lahan</span
+                                    >
+                                    <span
+                                        class="suitability-badge"
+                                        id="display-suitability"
+                                        >Stabil</span
+                                    >
+                                </div>
+                            </div>
+                            <p class="cluster-desc" id="display-cluster-desc">
+                                Model mengelompokkan lahan Anda ke dalam klaster
+                                tertentu berdasarkan kemiripan nutrisi dan
+                                cuaca.
+                            </p>
+                            <div class="quick-metrics">
+                                <div class="q-metric">
+                                    <span class="q-label">Status Nitrogen</span>
+                                    <span class="q-val" id="metric-n">-</span>
+                                </div>
+                                <div class="q-metric">
+                                    <span class="q-label">Iklim Lahan</span>
+                                    <span class="q-val" id="metric-climate"
+                                        >-</span
+                                    >
+                                </div>
+                                <div class="q-metric">
+                                    <span class="q-label">Kondisi Air</span>
+                                    <span class="q-val" id="metric-water"
+                                        >-</span
+                                    >
+                                </div>
+                            </div>
+                            <button
+                                class="download-btn"
+                                id="btn-download-report"
+                                onclick="downloadReport()"
+                            >
+                                <i data-lucide="file-down"></i> Unduh Laporan
+                                Analisis
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chart Card -->
+                    <div class="card chart-card">
+                        <div class="card-header-simple">
+                            <h3>Perbandingan Karakteristik Tanah</h3>
+                            <span>Input Anda vs Rata-rata Klaster</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Dashboard Grid (Insights & Evaluation) -->
+                <div class="dashboard-grid secondary-grid">
+                    <!-- Actionable Insights Card -->
+                    <div class="card insights-card">
+                        <div class="card-header-simple">
+                            <h3>
+                                <i data-lucide="droplet"></i> Rekomendasi
+                                Tindakan Agronomi
+                            </h3>
+                            <span
+                                >Optimalisasi kondisi tanah berdasarkan
+                                parameter input</span
+                            >
+                        </div>
+                        <div class="insights-content">
+                            <div
+                                id="soil-suggestions-container"
+                                class="suggestions-list"
+                            >
+                                <!-- Dynamic suggestions populated by app.js -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Model Evaluation Card -->
+                    <div class="card evaluation-card">
+                        <div class="card-header-simple">
+                            <h3>
+                                <i data-lucide="bar-chart-3"></i> Evaluasi
+                                Performa Model
+                            </h3>
+                            <span>Perbandingan Algoritma Klasterisasi</span>
+                        </div>
+                        <div class="evaluation-content">
+                            <table class="eval-table">
+                                <thead>
+                                    <tr>
+                                        <th>Metrik Pengujian</th>
+                                        <th>K-Means (K=22)</th>
+                                        <th>DBSCAN (Eps=0.8)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Silhouette Score</td>
+                                        <td class="eval-highlight">0.347</td>
+                                        <td>0.052</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Davies-Bouldin Index</td>
+                                        <td class="eval-highlight">1.105</td>
+                                        <td>1.841</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Adjusted Rand Index (ARI)</td>
+                                        <td class="eval-highlight">0.671</td>
+                                        <td>0.382</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p class="eval-note">
+                                * K-Means terpilih karena data membentuk
+                                kelompok terpusat yang padat, sedangkan DBSCAN
+                                menganggap mayoritas data agronomi sebagai
+                                noise/outliers.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended Crops Section -->
+                <section class="crops-section">
+                    <div class="section-header-main">
+                        <h2>
+                            <i class="fa-solid fa-wheat-awn"></i> Varietas
+                            Tanaman Direkomendasikan
+                        </h2>
+                        <p>
+                            Tanaman di bawah ini memiliki kecocokan agronomi
+                            paling tinggi dengan kondisi lahan Anda:
+                        </p>
+                    </div>
+                    <div class="crops-grid" id="crops-container">
+                        <!-- Cards will be populated dynamically -->
+                    </div>
+                </section>
+
+                <footer class="app-footer">
+                    <p>© 2026. Dikembangkan dengan K-Means Clustering.</p>
+                </footer>
+            </main>
+        </div>
+        <!-- Lucide Icons Library -->
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <!-- html2pdf Library for direct PDF downloads -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+        <script src="app.js"></script>
+    </body>
+</html>
