@@ -4,6 +4,8 @@ Proyek ini bertujuan untuk mengelompokkan jenis tanaman berdasarkan karakteristi
 
 ---
 
+![alt text](image.png)
+
 ## 1. Ringkasan Proyek
 
 ### 1.1 Judul
@@ -96,35 +98,6 @@ Dalam bidang pertanian modern, pemilihan jenis tanaman yang sesuai dengan kondis
 | Silhouette Score          | Mengukur kualitas pemisahan antar klaster.        |
 | Davies-Bouldin Index      | Mengukur kemiripan antar klaster.                 |
 | Adjusted Rand Index (ARI) | Mengukur akurasi clustering dibanding label asli. |
-
-### 4.3 Karakteristik Klaster Utama (Hasil K-Means)
-
-Berikut adalah beberapa cluster khas yang berhasil diidentifikasi secara logis oleh model K-Means:
-
-| Cluster | Contoh Tanaman                    | Karakteristik Agronomi Utama (Rata-rata)                               | Klasifikasi Lahan                       |
-| :-----: | :-------------------------------- | :--------------------------------------------------------------------- | :-------------------------------------- |
-|  **0**  | Mungbean, Orange, Papaya          | Suhu Hangat (~29°C), Kelembaban Tinggi (~88%), Hujan Rendah (~62 mm)   | Lahan Tropis Basah Lembut, Hujan Rendah |
-|  **1**  | Coffee                            | N Tinggi (~101 mg/kg), Curah Hujan Tinggi (~158 mm)                    | Perkebunan Basah Dataran Tinggi         |
-|  **2**  | Chickpea                          | Kelembaban Kering (~17%), Suhu Sejuk (~19°C), pH (~7.4)                | Lahan Kering Dingin / Sub-Tropis        |
-|  **3**  | Grapes, Apple                     | Kalium Tinggi (~200 mg/kg), Fosfor Tinggi (~134 mg/kg)                 | Kebun Buah Khusus Hara Kalium Tinggi    |
-|  **4**  | Pomegranate, Orange, Coconut      | Kelembaban Tinggi (~91%), Hara Rendah (N ~19, P ~18, K ~33)            | Lahan Pesisir Basah (Miskin Hara)       |
-|  **5**  | Pigeonpeas, Mothbeans, Mango      | Suhu Panas (~31°C), Kelembaban Rendah (~49%)                           | Lahan Tropis Kering Hangat (Semi-Arid)  |
-|  **6**  | Watermelon, Muskmelon             | Kelembaban Tinggi (~89%), Curah Hujan Rendah (~38 mm)                  | Lahan Tropis Hangat (Buah Kaya Air)     |
-|  **7**  | Pigeonpeas, Mothbeans, Mango      | Suhu Panas (~30°C), Kelembaban Rendah (~50%), pH Asam (~4.9)           | Lahan Kering Hangat (Tanah Asam)        |
-|  **8**  | Pigeonpeas, Mothbeans, Lentil     | Kelembaban Sedang (~63%), Curah Hujan Rendah (~62 mm), pH Netral       | Lahan Kering Nutrisi Sedang (Netral)    |
-|  **9**  | Rice, Jute, Papaya                | Curah Hujan Sangat Tinggi (~180 mm), Kelembaban Tinggi (~81%)          | Lahan Sawah Basah (Genangan Air)        |
-| **10**  | Banana, Cotton                    | N Tinggi (~101 mg/kg), P & K Sedang (~81 & ~49), Hujan (~104 mm)       | Lahan Subur Sedang, Curah Hujan Cukup   |
-| **11**  | Pomegranate, Orange               | Suhu Sejuk (~18°C), Kelembaban Tinggi (~91%), Hara Rendah              | Lahan Tropis Basah Sejuk (Hara Rendah)  |
-| **12**  | Chickpea, Kidneybeans             | Suhu Sejuk (~20°C), Kelembaban Sangat Kering (~27%), pH Asam (~5.7)    | Lahan Kering Sejuk Asam Sedang          |
-| **13**  | Mothbeans                         | pH Basa (~8.7), Curah Hujan Rendah (~54 mm), Suhu Hangat (~28°C)       | Lahan Kering Basa (Alkaloid Tinggi)     |
-| **14**  | Rice, Papaya                      | Curah Hujan Ekstrem (~252 mm), Kelembaban Tinggi (~83%)                | Lahan Basah Genangan Tinggi / Rawa      |
-| **15**  | Maize, Papaya, Cotton             | Suhu Sejuk (~22°C), Kelembaban Sedang (~67%), Hujan Sedang (~84 mm)    | Lahan Subur Sedang Iklim Sejuk          |
-| **16**  | Grapes                            | Suhu Ekstrem Panas (~35°C), Kelembaban Tinggi (~82%), K Tinggi (~200)  | Lahan Kalium Tinggi Tropis Sangat Panas |
-| **17**  | Rice, Pigeonpeas, Orange, Coconut | Kelembaban Sangat Tinggi (~94%), Hara Rendah, Hujan Tinggi (~175 mm)   | Lahan Basah Pesisir Humid (Hara Rendah) |
-| **18**  | Papaya                            | Suhu Ekstrem Panas (~39°C), Kelembaban Sangat Tinggi (~92%)            | Lahan Basah Tropis Ekstrem Panas        |
-| **19**  | Grapes                            | Suhu Ekstrem Dingin (~14°C), Kelembaban Tinggi (~82%), K Tinggi (~200) | Lahan Kalium Tinggi Sub-Tropis Dingin   |
-| **20**  | Pigeonpeas, Mothbeans, Lentil     | Kelembaban Sedang (~63%), Curah Hujan Rendah (~52 mm)                  | Lahan Kering Hara Rendah                |
-| **21**  | Maize, Watermelon, Cotton         | N Ekstrem Tinggi (~118 mg/kg), Kelembaban Tinggi (~80%), pH (~7.0)     | Lahan Sangat Subur Nitrogen Tinggi      |
 
 ---
 
