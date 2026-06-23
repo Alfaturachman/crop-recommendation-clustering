@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Sistem Rekomendasi Tanaman Cerdas - AgriAI</title>
+        <title>Sistem Rekomendasi Tanaman Cerdas - AGORAI</title>
         <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,6 +18,12 @@
         />
         <!-- Chart.js -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- Leaflet.js for GIS Map -->
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
@@ -29,7 +35,7 @@
                         <i class="fa-solid fa-seedling"></i>
                     </div>
                     <div class="brand-text">
-                        <h1>AgriAI</h1>
+                        <h1>AGORAI</h1>
                         <span>Smart Crop Recommendation</span>
                     </div>
                 </div>
@@ -222,7 +228,28 @@
                     <div class="nav-title">
                         Dashboard Analisis Lahan & Rekomendasi Tanaman
                     </div>
-                    <div style="display: flex; align-items: center; gap: 16px">
+                    <div style="display: flex; align-items: center; gap: 12px">
+                        <div class="model-switcher">
+                            <i
+                                class="fa-solid fa-brain model-switcher-icon"
+                            ></i>
+                            <select
+                                id="model-select"
+                                onchange="switchModel(this.value)"
+                            >
+                                <option value="kmeans">K-Means (K=22)</option>
+                                <option value="kmedoids">
+                                    K-Medoids (K=22)
+                                </option>
+                                <option value="gmm">GMM (K=22)</option>
+                                <option value="hierarchical">
+                                    Hierarchical (K=22)
+                                </option>
+                                <option value="fcm">
+                                    Fuzzy C-Means (K=22)
+                                </option>
+                            </select>
+                        </div>
                         <div class="badge-restricted">
                             <i class="fa-solid fa-circle-check"></i> Project
                             Machine Learning
@@ -244,8 +271,7 @@
                         <div class="card-content">
                             <div class="result-meta">
                                 <span class="badge-live"
-                                    ><span class="dot"></span> Real-Time K-Means
-                                    Inference</span
+                                    ><span class="dot"></span> Real-Time <span id="display-model-name">K-Means</span> Inference</span
                                 >
                                 <h3>Klaster Lahan Terdeteksi</h3>
                             </div>
@@ -341,44 +367,167 @@
                                 <i data-lucide="bar-chart-3"></i> Evaluasi
                                 Performa Model
                             </h3>
-                            <span>Perbandingan Algoritma Klasterisasi</span>
+                            <span>Perbandingan 5 Algoritma Klasterisasi</span>
                         </div>
                         <div class="evaluation-content">
-                            <table class="eval-table">
+                            <table class="eval-table" id="eval-table">
                                 <thead>
                                     <tr>
-                                        <th>Metrik Pengujian</th>
-                                        <th>K-Means (K=22)</th>
-                                        <th>DBSCAN (Eps=0.8)</th>
+                                        <th>Model</th>
+                                        <th>Silhouette &uarr;</th>
+                                        <th>DBI &darr;</th>
+                                        <th>ARI &uarr;</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Silhouette Score</td>
-                                        <td class="eval-highlight">0.347</td>
-                                        <td>0.052</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Davies-Bouldin Index</td>
-                                        <td class="eval-highlight">1.105</td>
-                                        <td>1.841</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Adjusted Rand Index (ARI)</td>
-                                        <td class="eval-highlight">0.671</td>
-                                        <td>0.382</td>
-                                    </tr>
+                                <tbody id="eval-tbody">
+                                    <!-- Populated by app.js -->
                                 </tbody>
                             </table>
                             <p class="eval-note">
-                                * K-Means terpilih karena data membentuk
-                                kelompok terpusat yang padat, sedangkan DBSCAN
-                                menganggap mayoritas data agronomi sebagai
-                                noise/outliers.
+                                * GMM unggul pada ARI (0.816). K-Means dipilih
+                                sebagai default karena keseimbangan terbaik
+                                antara Silhouette &amp; interpretabilitas
+                                klaster.
                             </p>
                         </div>
                     </div>
                 </div>
+
+                <!-- GIS Indonesia Map Section -->
+                <section class="gis-section">
+                    <div class="section-header-main">
+                        <h2>
+                            <i class="fa-solid fa-map-location-dot"></i> Peta
+                            Sebaran Pertanian Indonesia
+                        </h2>
+                        <p>
+                            Klik pada wilayah provinsi untuk mengisi parameter
+                            agronomi secara otomatis berdasarkan kondisi iklim
+                            setempat.
+                        </p>
+                    </div>
+                    <div class="gis-container">
+                        <div class="gis-map-wrapper">
+                            <div id="indonesia-map"></div>
+                            <div class="map-legend">
+                                <div class="legend-title">
+                                    Zona Iklim Agronomi
+                                </div>
+                                <div class="legend-items">
+                                    <div class="legend-item">
+                                        <span
+                                            class="legend-dot"
+                                            style="background: #10b981"
+                                        ></span>
+                                        <span>Lahan Basah / Tropis</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span
+                                            class="legend-dot"
+                                            style="background: #f97316"
+                                        ></span>
+                                        <span>Lahan Kering / Arid</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span
+                                            class="legend-dot"
+                                            style="background: #3b82f6"
+                                        ></span>
+                                        <span>Dataran Tinggi / Sejuk</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span
+                                            class="legend-dot"
+                                            style="background: #eab308"
+                                        ></span>
+                                        <span>Perkebunan / Campuran</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gis-info-panel">
+                            <div class="gis-info-header">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span id="gis-province-name"
+                                    >Pilih Provinsi</span
+                                >
+                            </div>
+                            <div
+                                id="gis-province-content"
+                                class="gis-province-placeholder"
+                            >
+                                <i class="fa-solid fa-hand-pointer"></i>
+                                <p>
+                                    Klik pada marker atau wilayah provinsi di
+                                    peta untuk melihat data agronomi dan mengisi
+                                    parameter secara otomatis.
+                                </p>
+                            </div>
+                            <div
+                                id="gis-province-data"
+                                class="gis-province-data"
+                                style="display: none"
+                            >
+                                <div class="gis-data-grid">
+                                    <div class="gis-data-item">
+                                        <span class="gis-data-label"
+                                            >Zona Iklim</span
+                                        >
+                                        <span class="gis-data-val" id="gis-zone"
+                                            >-</span
+                                        >
+                                    </div>
+                                    <div class="gis-data-item">
+                                        <span class="gis-data-label"
+                                            >Curah Hujan</span
+                                        >
+                                        <span
+                                            class="gis-data-val"
+                                            id="gis-rainfall"
+                                            >-</span
+                                        >
+                                    </div>
+                                    <div class="gis-data-item">
+                                        <span class="gis-data-label"
+                                            >Suhu Rata-rata</span
+                                        >
+                                        <span class="gis-data-val" id="gis-temp"
+                                            >-</span
+                                        >
+                                    </div>
+                                    <div class="gis-data-item">
+                                        <span class="gis-data-label"
+                                            >Kelembaban</span
+                                        >
+                                        <span
+                                            class="gis-data-val"
+                                            id="gis-humidity"
+                                            >-</span
+                                        >
+                                    </div>
+                                    <div class="gis-data-item">
+                                        <span class="gis-data-label"
+                                            >pH Tanah</span
+                                        >
+                                        <span class="gis-data-val" id="gis-ph"
+                                            >-</span
+                                        >
+                                    </div>
+                                </div>
+                                <button
+                                    class="gis-apply-btn"
+                                    id="gis-apply-btn"
+                                    onclick="applyGISParams()"
+                                >
+                                    <i
+                                        class="fa-solid fa-wand-magic-sparkles"
+                                    ></i>
+                                    Terapkan Parameter ke Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
                 <!-- Recommended Crops Section -->
                 <section class="crops-section">

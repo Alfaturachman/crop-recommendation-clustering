@@ -775,6 +775,329 @@ input[type='range']::-webkit-slider-thumb:hover {
     padding-top: 12px;
 }
 
+/* ========================
+   GIS Indonesia Map Section
+   ======================== */
+.gis-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.gis-container {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+    min-height: 420px;
+}
+
+.gis-map-wrapper {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+#indonesia-map {
+    width: 100%;
+    height: 420px;
+    z-index: 1;
+}
+
+/* Override Leaflet default styling to match theme */
+.leaflet-container {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #f0f9f4;
+}
+
+.leaflet-popup-content-wrapper {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    padding: 0;
+    overflow: hidden;
+}
+
+.leaflet-popup-tip-container {
+    margin-top: -1px;
+}
+
+.leaflet-popup-tip {
+    background: #ffffff;
+}
+
+.leaflet-popup-content {
+    margin: 0;
+    width: auto !important;
+}
+
+.map-popup {
+    padding: 14px 16px;
+    min-width: 190px;
+}
+
+.map-popup-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.map-popup-zone {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.zone-wet { background: rgba(16,185,129,0.1); color: #059669; }
+.zone-dry { background: rgba(249,115,22,0.1); color: #ea580c; }
+.zone-highland { background: rgba(59,130,246,0.1); color: #2563eb; }
+.zone-plantation { background: rgba(234,179,8,0.1); color: #a16207; }
+
+.map-popup-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.map-popup-stats span {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.popup-stat-icon {
+    color: var(--text-muted);
+    font-size: 10px;
+    margin-right: 2px;
+}
+
+/* Map Legend */
+.map-legend {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 10px 12px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.legend-title {
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* GIS Info Panel */
+.gis-info-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+.gis-info-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.gis-info-header i {
+    color: var(--accent-green);
+    font-size: 15px;
+}
+
+/* Placeholder state */
+.gis-province-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+    flex-grow: 1;
+    padding: 20px 10px;
+    color: var(--text-muted);
+}
+
+.gis-province-placeholder i {
+    font-size: 32px;
+    color: var(--border-accent);
+    animation: float-cursor 2s infinite ease-in-out;
+}
+
+@keyframes float-cursor {
+    0%, 100% { transform: translateY(0) rotate(-10deg); }
+    50% { transform: translateY(-8px) rotate(10deg); }
+}
+
+.gis-province-placeholder p {
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--text-muted);
+}
+
+/* Province Data */
+.gis-province-data {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-grow: 1;
+}
+
+.gis-data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.gis-data-item {
+    background: #f8fafc;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.gis-data-label {
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.gis-data-val {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+/* Commodity spans full width */
+.gis-data-item:last-child {
+    grid-column: 1 / -1;
+}
+
+/* Apply Button */
+.gis-apply-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #0f766e, #10b981);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 3px 8px rgba(16, 185, 129, 0.2);
+    margin-top: auto;
+}
+
+.gis-apply-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+.gis-apply-btn:active {
+    transform: translateY(0);
+}
+
+/* Applied feedback pulse */
+.gis-apply-btn.applied {
+    background: linear-gradient(135deg, #065f46, #059669);
+}
+
+/* Custom Leaflet marker icon overrides */
+.custom-marker {
+    position: relative;
+}
+
+.marker-pin {
+    width: 28px;
+    height: 28px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.marker-pin::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: white;
+    opacity: 0.6;
+}
+
+/* GIS Responsive */
+@media (max-width: 1100px) {
+    .gis-container {
+        grid-template-columns: 1fr;
+    }
+    #indonesia-map {
+        height: 350px;
+    }
+}
+
 /* Login Split Screen Styles */
 .login-body {
     background: linear-gradient(135deg, #f0fdf4 0%, #e6f7ed 50%, #d1fae5 100%);
@@ -1193,3 +1516,64 @@ input[type='range']::-webkit-slider-thumb:hover {
         padding: 32px;
     }
 }
+
+/* Model Switcher Dropdown Style */
+.model-switcher {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 0 12px;
+    height: 38px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.model-switcher:hover {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.model-switcher-icon {
+    font-size: 14px;
+    color: var(--accent-green);
+    margin-right: 8px;
+}
+
+.model-switcher select {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding-right: 20px;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.model-switcher::after {
+    content: '\f107'; /* FontAwesome angle-down */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+/* Eval Table Row Highlight */
+.eval-active-row {
+    background-color: rgba(16, 185, 129, 0.05) !important;
+    border-left: 3px solid var(--accent-green);
+}
+
+.eval-active-row td {
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+}
+
