@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 import joblib
@@ -10,8 +11,18 @@ from sklearn.multioutput import MultiOutputClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score
 
+# Helper function to find files in current or parent directory
+def find_file(filename):
+    if os.path.exists(filename):
+        return filename
+    parent_path = os.path.join('..', filename)
+    if os.path.exists(parent_path):
+        return parent_path
+    return filename
+
 # Load data
-df = pd.read_csv('crop_recommendation.csv')
+csv_path = find_file('crop_recommendation.csv')
+df = pd.read_csv(csv_path)
 features = ['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']
 X = df[features]
 
@@ -70,4 +81,3 @@ print("\nGMM Multilabel Metrics:")
 print(f"Subset Accuracy: {sub_acc_gm:.4f}")
 print(f"F1 Micro: {f1_micro_gm:.4f}")
 print(f"F1 Macro: {f1_macro_gm:.4f}")
-

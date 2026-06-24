@@ -1,168 +1,139 @@
-# Klasterisasi Karakteristik Lahan Agronomi untuk Sistem Rekomendasi Tanaman Multilabel
+# Application of Soft and Hard Clustering on Agronomic Land Characteristics: An Unsupervised Approach for Multi-Commodity Crop Recommendation System
 
-Proyek ini bertujuan untuk mengelompokkan lahan pertanian berdasarkan karakteristik agronomi dan mikroklimat menggunakan berbagai algoritma _Unsupervised Learning_ (**Gaussian Mixture Model (GMM)**, **Fuzzy C-Means (FCM)**, **K-Means**, **K-Medoids**, **Hierarchical Clustering**, dan **DBSCAN**). Dengan memetakan profil tanah ke dalam klaster agronomi tertentu, sistem ini mampu menghasilkan **rekomendasi tanaman multilabel (_multilabel crop recommendation_)** yang fleksibel guna mendukung pertanian presisi, rotasi tanaman, dan tumpang sari.
+Proyek ini bertujuan untuk mengelompokkan lahan pertanian berdasarkan karakteristik agronomi dan mikroklimat menggunakan pendekatan **pembelajaran dua tahap (Two-Stage Machine Learning Pipeline)**:
 
----
+1. **Tahap 1 (Unsupervised Learning)**: Pengelompokan lahan menggunakan **Gaussian Mixture Model (GMM)** dan **K-Means** untuk mengidentifikasi profil tanah.
+2. **Tahap 2 (Supervised Multilabel Classification)**: Pelatihan model **Random Forest Classifier** menggunakan target hasil klasterisasi yang ditransformasikan secara multilabel (`MultiLabelBinarizer`) untuk menghasilkan rekomendasi komoditas secara simultan.
 
-![alt text](image.png)
-
-## 1. Formulasi Permasalahan & Ringkasan Akademik
-
-### 1.1 Judul Penelitian
-
-**Klasterisasi Karakteristik Lahan Agronomi Menggunakan Algoritma Unsupervised Learning untuk Sistem Rekomendasi Tanaman Multilabel**
-
-### 1.2 Latar Belakang (Context)
-
-Dalam era pertanian modern (_precision agriculture_), produktivitas hasil pertanian sangat bergantung pada ketepatan penanaman komoditas yang sesuai dengan kondisi biofisik lahan. Parameter agronomi penentu keberhasilan kultivasi meliputi kandungan unsur hara utama tanah (Nitrogen [N], Fosfor [P], Kalium [K]), tingkat keasaman tanah (pH), serta kondisi iklim mikro sekitar (suhu rata-rata, kelembaban relatif udara, dan intensitas curah hujan tahunan).
-
-Sebagian besar penelitian sebelumnya memperlakukan pencarian kesesuaian tanaman ini sebagai masalah klasifikasi terawasi multi-kelas (_supervised multi-class classification_), di mana model memetakan parameter tanah ke satu jenis tanaman ($X \to Y$). Namun, pendekatan ini memiliki kelemahan mendasar:
-
-1. **Multi-Kompatibilitas Lahan**: Secara alami, sebidang tanah dengan parameter agronomi tertentu tidak hanya cocok untuk satu jenis komoditas. Lahan tersebut dapat mendukung pertumbuhan beberapa jenis tanaman yang memiliki kebutuhan toleransi ekologis serupa.
-2. **Kebutuhan Diversifikasi Tani**: Petani memerlukan alternatif tanaman guna memfasilitasi rotasi tanaman (_crop rotation_) demi menjaga kesehatan tanah, tumpang sari (_intercropping_), atau sebagai mitigasi risiko fluktuasi harga pasar dan gagal panen.
-
-Dengan demikian, rekomendasi komoditas pertanian secara teoritis dan praktis merupakan sebuah kasus **rekomendasi multilabel (_multilabel recommendation_)** ($X \to \mathbf{y}$ di mana $\mathbf{y} \subset \text{Crops}$).
-
-### 1.3 Rumusan Permasalahan (Core Problems)
-
-1. **Keterbatasan Paradigma Klasifikasi Tunggal**: Pendekatan supervised konvensional membatasi keluaran sistem hanya pada satu label komoditas (_single-label_). Hal ini mengabaikan alternatif tanaman lain yang sebenarnya memiliki probabilitas tumbuh yang sama tingginya.
-2. **Ketiadaan Dataset Multilabel Aktual**: Dataset pertanian yang tersedia secara publik umumnya hanya mencatat satu jenis komoditas yang ditanam secara historis pada setiap sampel parameter tanah (single-label per baris). Pembuatan dataset multilabel melalui uji laboratorium secara langsung sangat mahal dan memakan waktu lama.
-3. **Rigiditas Batas Spasial Tanah (Boundary Uncertainty)**: Karakteristik tanah bersifat kontinu dan memiliki zona transisi. Penggunaan klasterisasi keras (_hard clustering_) seperti K-Means atau K-Medoids membagi ruang secara tegas, sehingga tidak mampu menangani ketidakpastian (_uncertainty_) pada perbatasan klaster. Hal ini memicu perlunya penggunaan klasterisasi lunak (_fuzzy/probabilistic clustering_) seperti _Gaussian Mixture Model (GMM)_ dan _Fuzzy C-Means (FCM)_ untuk memberikan rekomendasi multilabel berperingkat berdasarkan derajat keanggotaan.
-
-### 1.4 Jenis Learning Task
-
-- **Metode**: Unsupervised Learning (Clustering) didukung Reduksi Dimensi (PCA).
-- **Pendekatan Rekomendasi**: Multilabel Recommendation berbasis Asosiasi Klaster & Keanggotaan Fuzzy/Probabilistik.
-- **Algoritma yang Dievaluasi**:
-    1. **Gaussian Mixture Model (GMM)** (Pendekatan Probabilistik)
-    2. **Fuzzy C-Means (FCM)** (Pendekatan Logika Fuzzy)
-    3. **K-Means Clustering** (Pendekatan Centroid)
-    4. **K-Medoids / Partitioning Around Medoids (PAM)** (Robust Centroid)
-    5. **Hierarchical (Agglomerative) Clustering** (Pendekatan Konektivitas)
-    6. **DBSCAN** (Pendekatan Kerapatan Spasial - Density-Based)
-
-### 1.5 Fitur Input (Variabel Agronomi)
-
-| Fitur           | Satuan | Deskripsi                            |
-| :-------------- | :----: | :----------------------------------- |
-| **N**           | mg/kg  | Rasio kandungan Nitrogen dalam tanah |
-| **P**           | mg/kg  | Rasio kandungan Fosfor dalam tanah   |
-| **K**           | mg/kg  | Rasio kandungan Kalium dalam tanah   |
-| **Temperature** |   °C   | Suhu lingkungan rata-rata            |
-| **Humidity**    |   %    | Kelembaban relatif udara             |
-| **pH**          |   -    | Skala keasaman tanah (0 - 14)        |
-| **Rainfall**    |   mm   | Intensitas curah hujan tahunan       |
+Sistem ini dirancang untuk mendukung pertanian presisi, rotasi tanaman, dan diversifikasi komoditas.
 
 ---
 
-## 2. Dataset dan Representasi Data
+## 1. Struktur Direktori Proyek
 
-### 2.1 Informasi Dataset
+Untuk menjaga kerapian dan kemudahan navigasi, workspace proyek telah ditata ke dalam struktur berikut:
+
+```text
+├── models/                      # File model terkompresi (.joblib)
+│   ├── best_model.joblib
+│   ├── gmm_model.joblib
+│   ├── kmeans_model.joblib
+│   ├── pca_5.joblib
+│   ├── scaler.joblib
+│   └── supervised_multilabel_*.joblib
+├── notebooks/                   # Jupyter Notebooks untuk eksperimen & evaluasi
+│   ├── notebook.ipynb
+│   ├── notebook 5.ipynb
+│   └── supervised_multilabel.ipynb
+├── scripts/                     # Script Python untuk otomasi & visualisasi
+│   ├── create_bar_chart.py      # Pembuatan Bar Chart komparasi metrik
+│   ├── create_class_distribution.py # Pembuatan Bar Chart distribusi kelas ground truth
+│   ├── create_confusion_matrix.py # Pembuatan Confusion Matrix Multilabel
+│   ├── create_feature_correlation.py # Pembuatan Heatmap Korelasi Fitur Agronomi
+│   ├── create_feature_distributions.py # Pembuatan Distribusi Frekuensi 7 Fitur Input
+│   ├── create_heatmaps.py       # Pembuatan Heatmap Komposisi Klaster
+│   ├── create_outlier_comparison.py # Pembuatan Perbandingan Boxplot Sebelum/Setelah IQR Removal
+│   ├── create_pca_plots.py      # Pembuatan PCA Scatter Plots & Distribusi Klaster
+│   └── gmm kmeans.py            # Pipeline pengujian metrics
+├── crop_recommendation.csv      # Dataset agronomi
+├── app.py                       # Aplikasi web interaktif Streamlit
+├── draft_jurnal.md              # Draf artikel ilmiah utama
+├── *.png                        # Visualisasi hasil plot (Figure 1-8)
+└── readme.md                    # Dokumentasi utama proyek
+```
+
+---
+
+## 2. Formulasi Permasalahan & Ringkasan Akademik
+
+### 2.1 Judul Jurnal Utama
+
+**"Penerapan Soft dan Hard Clustering pada Karakteristik Lahan Agronomi: Pendekatan Tanpa Label untuk Sistem Rekomendasi Tanaman Multi-Komoditas"**
+
+### 2.2 Latar Belakang (Context)
+
+Dalam pertanian presisi, produktivitas hasil panen sangat bergantung pada kesesuaian komoditas dengan kondisi hara tanah (N, P, K) dan mikroklimat (suhu, kelembaban, pH, curah hujan). Pendekatan klasifikasi konvensional satu label ($X \to y$) mengabaikan sifat alami lahan yang kompatibel dengan banyak tanaman (_multi-commodity compatibility_). Lahan membutuhkan sistem rekomendasi multilabel untuk rotasi tanaman, tumpang sari, dan manajemen risiko gagal panen.
+
+### 2.3 Rumusan Masalah
+
+1. **Rigiditas Batas Tanah**: Karakteristik tanah bersifat kontinu dan memiliki zona transisi. Penggunaan klasterisasi keras (_hard clustering_) memotong paksa kontinuitas hara data.
+2. **Ketiadaan Dataset Multilabel Aktual**: Dataset publik umumnya bertipe label tunggal historis (_single-label_). Diperlukan pendekatan tanpa label (_unsupervised_) sebagai generator label multilabel target secara otomatis.
+
+---
+
+## 3. Dataset & Preprocessing
+
+### 3.1 Profil Data
 
 - **Sumber**: [Crop Recommendation Dataset (Kaggle)](https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset)
-- **Format**: CSV (.csv)
-- **Ukuran**: 2.200 baris × 8 kolom (7 fitur agronomi dan 1 target label kelas tanaman).
-- **Target Label (Ground Truth)**: Terdiri dari 22 varietas tanaman unik (digunakan murni untuk evaluasi eksternal model clustering melalui metrik _Adjusted Rand Index_).
+- **Format & Ukuran**: CSV, 2.200 baris × 8 kolom (7 fitur hara & iklim, 1 kolom label ground truth).
 
-### 2.2 Deskripsi Fitur
+### 3.2 Pemeliharaan Outlier (Outlier Preservation)
 
-Setiap baris data mencerminkan pengukuran tanah dan cuaca pada satu plot lahan, dengan target kelas tanaman yang berhasil dibudidayakan di lahan tersebut.
-
-### 2.3 Tantangan Preprocessing & Kebijakan Outlier
-
-- **Pemeliharaan Outlier (Outlier Preservation)**: Berdasarkan deteksi Boxplot, beberapa fitur (seperti Kalium/K, Fosfor/P, dan Curah Hujan/Rainfall) menunjukkan pencilan statistik yang tinggi. Proyek ini secara sadar **tidak menghapus outlier**. Penghapusan outlier secara global akan menghilangkan data tanaman spesifik yang secara biologis memang membutuhkan kadar ekstrim (contoh: Apel dan Anggur membutuhkan Kalium >200 mg/kg, sedangkan Padi membutuhkan curah hujan >180 mm).
-- **Standardisasi Skala**: Rentang nilai antar fitur sangat timpang (misal: Nitrogen berkisar 0-140 mg/kg, sedangkan pH tanah berkisar 3.5-9.9). Oleh karena itu, standardisasi menggunakan `StandardScaler` mutlak diperlukan agar fitur berskala besar tidak mendominasi perhitungan jarak.
-- **Reduksi Dimensi (PCA)**: Penerapan `PCA(n_components=5)` digunakan untuk mereduksi dimensi dari 7D ke 5D. Pendekatan ini mempertahankan **~89% variansi kumulatif data asli** sekaligus menyaring noise dan meningkatkan performa metrik evaluasi klaster.
+Beberapa fitur menunjukkan pencilan statistik yang tinggi secara global (terutama Kalium/K dan Fosfor/P). Proyek ini secara sadar **mempertahankan outlier** karena data tersebut mewakili kondisi hara spesifik biologis tanaman bernilai tinggi (contoh: Apel dan Anggur secara alamiah membutuhkan Kalium ekstrem >200 mg/kg). Penghapusan pencilan global akan melenyapkan 100% sampel kedua tanaman tersebut dari taksonomi sistem rekomendasi.
 
 ---
 
-## 3. Pipeline Machine Learning
+## 4. Pipeline Pembelajaran Dua Tahap
 
 ```mermaid
 graph TD
-    A[Dataset Lahan 7D] --> B[Analisis Pencilan - Outlier Dipertahankan]
+    A[Dataset Lahan 7D] --> B[Outlier Preservation]
     B --> C[Standardisasi - StandardScaler]
     C --> D[Reduksi Dimensi - PCA 5D]
-    D --> E[Pemodelan Clustering - K=22]
-    E --> F[Evaluasi Model - ARI, Silhouette, DBI]
-    F --> G[Ekstraksi Anggota Klaster - Rekomendasi Tanaman Multilabel]
-    G --> H[Deployment - Streamlit App]
-```
-
-1. **Preprocessing**: Validasi null, pemeriksaan duplikat, standardisasi fitur.
-2. **Feature Engineering**: Proyeksi PCA 5-komponen untuk pelatihan model dan PCA 2-komponen untuk visualisasi scatterplot.
-3. **Model Training**: Menjalankan 6 algoritma dengan jumlah klaster $K=22$ (sesuai dengan jumlah varietas tanaman asli untuk keperluan evaluasi ARI).
-4. **Evaluation**:
-    - **Silhouette Score**: Mengukur kerapatan klaster internal.
-    - **Davies-Bouldin Index (DBI)**: Mengukur keterpisahan klaster.
-    - **Adjusted Rand Index (ARI)**: Mengukur keselarasan hasil klasterisasi tanpa label dengan label aktual tanaman asli.
-5. **Inference / Rekomendasi**: Lahan baru dipetakan ke dalam klaster, dan seluruh tanaman unik yang secara historis tumbuh subur di klaster tersebut disajikan sebagai **rekomendasi multilabel**.
-
----
-
-## 4. Hasil Eksperimen & Perbandingan Model
-
-### 4.1 Perbandingan Performa Model (pada Ruang PCA 5D)
-
-Berikut adalah hasil komparasi performa model klasterisasi pada dataset pertanian (2.200 sampel):
-
-| Algoritma                        | Silhouette Score | Davies-Bouldin Index (DBI) | Adjusted Rand Index (ARI) | Karakteristik Output                                                                               |
-| :------------------------------- | :--------------: | :------------------------: | :-----------------------: | :------------------------------------------------------------------------------------------------- |
-| **Gaussian Mixture Model (GMM)** |      0.230       |           1.716            |         **0.816**         | **Probabilistik (Soft)** - Rekomendasi multilabel berperingkat berdasarkan probabilitas posterior. |
-| **Hierarchical (Agglomerative)** |      0.288       |           1.098            |           0.609           | Konektivitas (Hard)                                                                                |
-| **K-Means Clustering**           |    **0.307**     |         **1.081**          |           0.519           | Centroid-Based (Hard) - Pembagian area tegas                                                       |
-| **Fuzzy C-Means (FCM)**          |      0.243       |           1.379            |           0.511           | **Fuzzy (Soft)** - Derajat keanggotaan multilabel ($u_{ij} \in [0,1]$)                             |
-| **K-Medoids (PAM)**              |      0.285       |           1.221            |           0.448           | Centroid-Based Robust (Hard)                                                                       |
-| **DBSCAN**                       |      0.063       |           1.818            |           0.288           | Density-Based (Banyak noise: 636 data dianggap noise)                                              |
-
-### 4.2 Pembahasan & Analisis Masalah Multilabel
-
-1. **Keunggulan GMM**: GMM memperoleh nilai **ARI tertinggi (~0.816)** secara signifikan. Hal ini membuktikan bahwa persebaran data agronomi bersifat tumpang tindih (_overlapping density_) dan cocok dimodelkan dengan distribusi probabilitas Gaussian multivariat. Dalam konteks **rekomendasi multilabel**, GMM sangat unggul karena mampu menghasilkan probabilitas keanggotaan lahan terhadap beberapa klaster sekaligus, yang secara langsung dapat diterjemahkan menjadi tingkat keyakinan (_confidence level_) untuk rekomendasi tiap alternatif tanaman.
-2. **Keterbatasan DBSCAN**: DBSCAN memiliki performa terendah (ARI = 0.288) dan mengkategorikan 28.91% data sebagai noise. Hal ini disebabkan karena kerapatan data agronomi antar varietas tanaman sangat bervariasi dan saling bertumpukan, sehingga algoritma berbasis kerapatan kaku gagal membedakan batas klaster dengan baik.
-3. **K-Means vs FCM**: K-Means menghasilkan bentuk klaster sferis yang padat secara geometris (Silhouette = 0.307), namun FCM menawarkan keunggulan dalam hal fleksibilitas keanggotaan fuzzy yang sangat mendukung rekomendasi tanaman berperingkat pada wilayah perbatasan hara tanah.
-
----
-
-## 5. Rencana Penyebaran (Deployment Plan)
-
-Model diintegrasikan ke dalam aplikasi web interaktif berbasis **Streamlit**.
-
-### 5.1 Format API Input (JSON)
-
-```json
-{
-    "N": 90,
-    "P": 42,
-    "K": 43,
-    "temperature": 25.0,
-    "humidity": 80.0,
-    "ph": 6.5,
-    "rainfall": 150.0
-}
-```
-
-### 5.2 Format API Output (JSON Rekomendasi Multilabel)
-
-```json
-{
-    "predicted_cluster": 3,
-    "clustering_model": "GMM",
-    "confidence_score": 0.94,
-    "recommended_crops": ["rice", "banana", "papaya"]
-}
+    D --> E[Tahap 1: Klasterisasi Lahan K=22]
+    E -->|K-Means / GMM| F[Transformasi Label: MultiLabelBinarizer]
+    F --> G[Tahap 2: Random Forest Classifier]
+    G --> H[Rekomendasi Tanaman Multilabel]
+    H --> I[Deployment Streamlit App]
 ```
 
 ---
 
-## 6. Kesimpulan dan Saran
+## 5. Hasil Eksperimen & Perbandingan Model
 
-### Kesimpulan
+### 5.1 Tahap 1: Evaluasi Performa Klasterisasi (Unsupervised)
 
-1. **Model Terbaik**: Gaussian Mixture Model (GMM) adalah model terbaik dengan tingkat kesesuaian taksonomi tanaman asli tertinggi (ARI = 0.816).
-2. **Penyelesaian Kasus Multilabel**: Pendekatan klasterisasi terbukti berhasil memecahkan masalah rekomendasi tanaman multilabel secara alami dari dataset single-label tanpa memerlukan anotasi multilabel manual yang mahal.
-3. **Pentingnya Outlier**: Karakteristik agronomi tertentu secara alami memiliki nilai ekstrem (seperti apel/anggur pada Kalium, padi pada curah hujan). Mempertahankan outlier merupakan langkah krusial untuk menjaga kelengkapan varietas rekomendasi.
+| Algoritma                        | Silhouette Score | Davies-Bouldin Index (DBI) | Adjusted Rand Index (ARI) | Karakteristik Output                                                                                                                |
+| :------------------------------- | :--------------: | :------------------------: | :-----------------------: | :---------------------------------------------------------------------------------------------------------------------------------- |
+| **Gaussian Mixture Model (GMM)** |      0.230       |           1.716            |         **0.816**         | **Soft Clustering** - Menghasilkan orientasi klaster elipsoid dinamis yang tumpang-tindih secara alami sesuai persebaran data riil. |
+| **K-Means Clustering**           |    **0.307**     |         **1.081**          |           0.519           | **Hard Clustering** - Menghasilkan pembagian spasial rigid bulat sferis (_Voronoi cells_).                                          |
 
-### Saran Pengembangan Lanjutan
+### 5.2 Tahap 2: Evaluasi Akurasi Klasifikasi Multilabel (Supervised)
 
-1. **Ensemble Soft Clustering**: Menggabungkan probabilitas posterior GMM dengan derajat keanggotaan Fuzzy C-Means untuk merancang sistem rekomendasi hibrida yang lebih tangguh terhadap fluktuasi musiman.
-2. **Integrasi Kalender Tanam**: Menghubungkan keluaran rekomendasi tanaman multilabel dengan data ramalan cuaca bulanan BMKG untuk memberikan rekomendasi waktu tanam yang presisi bagi petani.
+Tabel di bawah menyajikan akurasi model Random Forest multilabel saat dilatih menggunakan target rekomendasi hasil pemetaan klaster Tahap 1:
+
+| Target Berbasis Model           | Subset Accuracy (Exact Match Ratio) | F1-Score (Micro) | F1-Score (Macro) |
+| :------------------------------ | :---------------------------------: | :--------------: | :--------------: |
+| **Target GMM (22 Klaster)**     |             **84.77%**              |      0.9404      |      0.9489      |
+| **Target K-Means (22 Klaster)** |               81.36%                |    **0.9537**    |    **0.9557**    |
+
+---
+
+## 6. Daftar Gambar Visualisasi Utama
+
+Proyek ini menghasilkan visualisasi pembuktian yang disertakan dalam artikel ilmiah:
+
+1. **`kmeans_pca_scatter.png` (Figure 1)**: Scatter plot 2D proyeksi PCA untuk klasterisasi K-Means.
+2. **`gmm_pca_scatter.png` (Figure 2)**: Scatter plot 2D proyeksi PCA untuk klaster GMM.
+3. **`cluster_distribution.png` (Figure 3)**: Perbandingan ukuran klaster, memperlihatkan K-Means memaksakan keseragaman ukuran sedangkan GMM adaptif terhadap kepadatan riil data.
+4. **`outlier_comparison.png` (Figure 4)**: Boxplot perbandingan sebaran Kalium (K) sebelum dan setelah pembersihan outlier global berbasis IQR, memperlihatkan hilangnya komoditas Apel dan Anggur secara total.
+5. **`kmeans_heatmap.png` (Figure 5)**: Heatmap komposisi klaster K-Means yang memperlihatkan fragmentasi spasial komoditas.
+6. **`gmm_heatmap.png` (Figure 6)**: Heatmap komposisi klaster GMM yang memperlihatkan pengelompokan komoditas secara kompak sesuai relung ekologisnya.
+7. **`model_comparison_bar.png` (Figure 7)**: Grafik batang perbandingan performa klasifikasi multilabel Tahap 2 (K-Means vs GMM) pada metrik Subset Accuracy dan F1-Score.
+8. **`multilabel_confusion_matrix.png` (Figure 8)**: Grid matriks konfusi biner multilabel untuk masing-masing dari 22 komoditas tanaman pada dataset uji.
+9. **`feature_distributions.png` (Figure 9)**: Grid plot histogram dan kurva KDE untuk melihat pola sebaran distribusi frekuensi dari 7 variabel agronomi input.
+10. **`crop_class_distribution.png` (Figure 10)**: Bar chart horizontal sebaran sampel 22 jenis tanaman target aktual (ground truth).
+11. **`feature_correlation.png` (Figure 11)**: Heatmap matriks korelasi Pearson antara 7 fitur input agronomi.
+
+---
+
+## 7. Deployment Aplikasi Streamlit
+
+Aplikasi GUI web dapat dijalankan secara lokal dengan mengetikkan perintah berikut pada terminal:
+
+```bash
+streamlit run app.py
+```
+
+Aplikasi ini menyediakan antarmuka pengguna interaktif untuk memasukkan parameter agronomi tanah secara manual dan memilih algoritma klasterisasi guna memunculkan rekomendasi tanaman multilabel beserta metrik performanya secara real-time.

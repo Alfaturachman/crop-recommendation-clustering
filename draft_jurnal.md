@@ -70,11 +70,26 @@ Bagian ini merangkum detail spesifikasi teknis dan hyperparameter dari seluruh k
 
 - **Sumber & URL Dataset:** _Crop Recommendation Dataset_ yang diunggah oleh Atharva Ingle di platform Kaggle ([Tautan Dataset](https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset)).
 - **Karakteristik:** Dataset ini memiliki 2.200 sampel tanah (masing-masing tanaman memiliki 100 sampel data).
-- **Fitur Agronomi:** Terdiri dari 7 fitur numerik: unsur hara tanah makro yaitu Nitrogen (N), Fosfor (P), Kalium (K); dan iklim mikro yaitu temperatur (temperature), kelembaban (humidity), derajat keasaman (ph), dan curah hujan (rainfall).
+- **Fitur Agronomi:** Terdiri dari 7 fitur numerik: unsur hara tanah makro yaitu Nitrogen (N), Fosfor (P), Kalium (K); dan iklim mikro yaitu temperatur (temperature), kelembaban (humidity), derajat keasaman (ph), dan curah hujan (rainfall), sebagaimana divisualisasikan pada Figure 9.
+
+- **Figure 9: Distribusi Frekuensi 7 Variabel Agronomi & Mikroklimat**
+  ![Figure 9: Distribusi Frekuensi 7 Variabel Agronomi & Mikroklimat](feature_distributions.png)
+  _Deskripsi:_ Grafik histogram dan KDE untuk 7 variabel input agronomi, menunjukkan distribusi unimodal/normal pada temperatur, kelembaban, dan pH, serta distribusi bimodal/skewed pada Nitrogen (N), Fosfor (P), Kalium (K), dan curah hujan (rainfall).
+
+- **Figure 10: Sebaran Sampel 22 Kelas Komoditas Tanaman (Ground Truth)**
+  ![Figure 10: Sebaran Sampel 22 Kelas Komoditas Tanaman](crop_class_distribution.png)
+  _Deskripsi:_ Diagram batang horizontal sebaran frekuensi sampel 22 jenis tanaman target aktual (ground truth). Dataset memiliki persebaran seimbang sempurna, dengan masing-masing komoditas memiliki tepat 100 sampel data.
+
+- **Figure 11: Matriks Korelasi Fitur Agronomi**
+  ![Figure 11: Matriks Korelasi Fitur Agronomi](feature_correlation.png)
+  _Deskripsi:_ Heatmap matriks korelasi Pearson antara 7 fitur input agronomi numerik. Korelasi positif terkuat terlihat antara Fosfor (P) dan Kalium (K) sebesar 0,74, sedangkan hubungan lainnya cenderung memiliki korelasi lemah atau independen.
 
 #### 2. Analisis Reduksi Dimensi (PCA)
 
-Metode PCA digunakan untuk mengompresi data 7D menjadi 5D demi meminimalkan multikolinearitas dan derau spasial dengan akumulasi **explained variance sebesar 87,58%**. Detail nilai per komponen adalah:
+Metode Principal Component Analysis (PCA) digunakan untuk menyusutkan data berdimensi 7 (7D) yang merepresentasikan 7 fitur input agronomi asli menjadi ruang ortogonal baru berdimensi 5 (5D). Reduksi dimensi ini bertujuan untuk:
+- **Mengeliminasi Multikolinearitas:** Berdasarkan visualisasi matriks korelasi pada Figure 11, fitur Fosfor (P) dan Kalium (K) memiliki hubungan linier positif kuat ($r = 0,74$) yang dapat mengganggu kestabilan perhitungan jarak spasial. PCA mentransformasikan data menjadi komponen-komponen baru (PC1 hingga PC5) yang saling tegak lurus (ortogonal) sehingga korelasi antar komponen bernilai nol.
+- **Menyaring Derau Spasial (Noise Filtering):** Membuang variasi data skala kecil yang bersifat acak dan tidak berkontribusi terhadap struktur kelompok alami.
+- **Mempertahankan Kandungan Informasi:** Walaupun jumlah dimensi dikurangi dari 7 menjadi 5, model tetap mempertahankan akumulasi variansi informasi (*explained variance*) sebesar **87,58%** dari total informasi asli. Detail nilai per komponen adalah:
 
 - **PC1:** Explained Variance = 27,59% (Eigenvalue = 1,932)
 - **PC2:** Explained Variance = 18,48% (Eigenvalue = 1,294)
@@ -123,7 +138,7 @@ Pengklasifikasi multilabel diimplementasikan melalui pembungkus `MultiOutputClas
 
 ### 3.1 Evaluasi Hasil Klasterisasi Lahan (Unsupervised)
 
-Sebelum proses klasterisasi dilakukan, analisis pencilan (_outlier analysis_) mendeteksi bahwa penerapan eliminasi pencilan IQR ($\pm 1.5 \times IQR$) secara standar pada dataset agronomi ini akan menghapus 432 baris data (19.6% dari total data). Tindakan penyaringan tersebut berakibat pada **penghapusan 100% data tanaman Anggur dan Apel**, karena secara agronomi kedua tanaman tersebut secara alamiah membutuhkan konsentrasi Kalium (K) yang sangat tinggi (>200 mg/kg) sehingga terdeteksi sebagai outlier global. Oleh karena itu, penelitian ini mempertahankan data outlier demi menjaga keberagaman komoditas pertanian.
+Sebelum proses klasterisasi dilakukan, analisis pencilan (_outlier analysis_) mendeteksi bahwa penerapan eliminasi pencilan IQR ($\pm 1.5 \times IQR$) secara standar pada dataset agronomi ini akan menghapus 432 baris data (19.6% dari total data). Tindakan penyaringan tersebut berakibat pada **penghapusan 100% data tanaman Anggur dan Apel**, karena secara agronomi kedua tanaman tersebut secara alamiah membutuhkan konsentrasi Kalium (K) yang sangat tinggi (>200 mg/kg) sehingga terdeteksi sebagai outlier global, sebagaimana divisualisasikan pada Figure 4. Oleh karena itu, penelitian ini mempertahankan data outlier demi menjaga keberagaman komoditas pertanian.
 
 Hasil evaluasi performa klasterisasi lahan pada ruang PCA 5D menggunakan metrik Silhouette Score, Davies-Bouldin Index (DBI), dan Adjusted Rand Index (ARI) disajikan pada tabel di bawah ini:
 
@@ -185,6 +200,26 @@ Hasil pemetaan spasial dan perbandingan ukuran klaster diilustrasikan pada gamba
 - **Figure 3: Cluster Size Distribution Comparison**
   ![Figure 3: Cluster Size Distribution Comparison](cluster_distribution.png)
   _Deskripsi:_ K-Means memaksakan persebaran ukuran klaster yang seragam dan kaku, sedangkan GMM menghasilkan sebaran ukuran klaster yang dinamis dan adaptif terhadap kepadatan riil data (misal, Klaster 0 mencapai 170 sampel).
+
+- **Figure 4: Boxplot Perbandingan Kalium Sebelum & Setelah IQR Removal**
+  ![Figure 4: Boxplot Perbandingan Kalium Sebelum & Setelah IQR Removal](outlier_comparison.png)
+  _Deskripsi:_ Perbandingan sebaran hara Kalium (K) sebelum (Kiri) dan setelah (Kanan) penghapusan pencilan global berbasis IQR ($K > 92,5$ mg/kg). Terlihat bahwa setelah pembersihan outlier global, seluruh data untuk komoditas Apel dan Anggur terhapus total dari dataset karena kebutuhan alami kadar hara kaliumnya yang tinggi.
+
+- **Figure 5: Heatmap Komposisi Klaster K-Means**
+  ![Figure 5: Heatmap Komposisi Klaster K-Means](kmeans_heatmap.png)
+  _Deskripsi:_ Heatmap ini menggambarkan persebaran komoditas tanaman di seluruh klaster K-Means. Terlihat beberapa tanaman terfragmentasi ke banyak klaster (misalnya _pigeonpeas_ tersebar di 9 klaster berbeda).
+
+- **Figure 6: Heatmap Komposisi Klaster GMM**
+  ![Figure 6: Heatmap Komposisi Klaster GMM](gmm_heatmap.png)
+  _Deskripsi:_ Heatmap GMM menunjukkan konsentrasi tanaman yang jauh lebih kompak pada klaster tertentu (maksimal hanya menyebar di 3 klaster), merefleksikan keselarasan dengan kelompok asosiasi tanaman asli.
+
+- **Figure 7: Bar Chart Perbandingan Performa Klasifikasi Multilabel (K-Means vs GMM)**
+  ![Figure 7: Bar Chart Perbandingan Performa Klasifikasi Multilabel](model_comparison_bar.png)
+  _Deskripsi:_ Grafik batang perbandingan performa klasifikasi multilabel Tahap 2, menunjukkan keunggulan GMM pada Subset Accuracy (84,77%) dan keunggulan tipis K-Means pada F1-Score Micro (95,37%) dan Macro (95,57%).
+
+- **Figure 8: Multilabel Confusion Matrix per Komoditas (GMM Target Pipeline)**
+  ![Figure 8: Multilabel Confusion Matrix per Komoditas](multilabel_confusion_matrix.png)
+  _Deskripsi:_ Grid matriks konfusi multilabel biner untuk 22 komoditas tanaman pada data uji, menunjukkan jumlah True Positive (TP), False Positive (FP), False Negative (FN), dan True Negative (TN) untuk setiap komoditas secara individual.
 
 #### 3. Analisis Galat (Error Analysis)
 
