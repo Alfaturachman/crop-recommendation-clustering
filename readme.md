@@ -18,12 +18,18 @@ Untuk menjaga kerapian dan kemudahan navigasi, workspace proyek telah ditata ke 
 │   ├── best_model.joblib
 │   ├── gmm_model.joblib
 │   ├── kmeans_model.joblib
+│   ├── mlb_dbscan.joblib
+│   ├── mlb_gmm.joblib
+│   ├── mlb_kmeans.joblib
 │   ├── pca_5.joblib
 │   ├── scaler.joblib
-│   └── supervised_multilabel_*.joblib
+│   ├── supervised_multilabel_dbscan.joblib
+│   ├── supervised_multilabel_gmm.joblib
+│   └── supervised_multilabel_kmeans.joblib
 ├── notebooks/                   # Jupyter Notebooks untuk eksperimen & evaluasi
-│   ├── notebook.ipynb
 │   ├── notebook 5.ipynb
+│   ├── notebook kmeans-dbscan.ipynb
+│   ├── notebook kmeans-gmm.ipynb
 │   └── supervised_multilabel.ipynb
 ├── scripts/                     # Script Python untuk otomasi & visualisasi
 │   ├── create_bar_chart.py      # Pembuatan Bar Chart komparasi metrik
@@ -38,7 +44,7 @@ Untuk menjaga kerapian dan kemudahan navigasi, workspace proyek telah ditata ke 
 ├── crop_recommendation.csv      # Dataset agronomi
 ├── app.py                       # Aplikasi web interaktif Streamlit
 ├── draft_jurnal.md              # Draf artikel ilmiah utama
-├── *.png                        # Visualisasi hasil plot (Figure 1-8)
+├── *.png                        # Visualisasi hasil plot (Figure 1-11)
 └── readme.md                    # Dokumentasi utama proyek
 ```
 
@@ -81,7 +87,7 @@ graph TD
     A[Dataset Lahan 7D] --> B[Outlier Preservation]
     B --> C[Standardisasi - StandardScaler]
     C --> D[Reduksi Dimensi - PCA 5D]
-    D --> E[Tahap 1: Klasterisasi Lahan K=22]
+    D --> E[Tahap 1: Klasterisasi Lahan K=12]
     E -->|K-Means / GMM| F[Transformasi Label: MultiLabelBinarizer]
     F --> G[Tahap 2: Random Forest Classifier]
     G --> H[Rekomendasi Tanaman Multilabel]
@@ -96,17 +102,17 @@ graph TD
 
 | Algoritma                        | Silhouette Score | Davies-Bouldin Index (DBI) | Adjusted Rand Index (ARI) | Karakteristik Output                                                                                                                |
 | :------------------------------- | :--------------: | :------------------------: | :-----------------------: | :---------------------------------------------------------------------------------------------------------------------------------- |
-| **Gaussian Mixture Model (GMM)** |      0.230       |           1.716            |         **0.816**         | **Soft Clustering** - Menghasilkan orientasi klaster elipsoid dinamis yang tumpang-tindih secara alami sesuai persebaran data riil. |
-| **K-Means Clustering**           |    **0.307**     |         **1.081**          |           0.519           | **Hard Clustering** - Menghasilkan pembagian spasial rigid bulat sferis (_Voronoi cells_).                                          |
+| **Gaussian Mixture Model (GMM)** |      0.286       |           1.246            |         **0.524**         | **Soft Clustering** - Menghasilkan orientasi klaster elipsoid dinamis yang tumpang-tindih secara alami sesuai persebaran data riil. |
+| **K-Means Clustering**           |    **0.324**     |         **1.084**          |           0.413           | **Hard Clustering** - Menghasilkan pembagian spasial rigid bulat sferis (_Voronoi cells_).                                          |
 
 ### 5.2 Tahap 2: Evaluasi Akurasi Klasifikasi Multilabel (Supervised)
 
-Tabel di bawah menyajikan akurasi model Random Forest multilabel saat dilatih menggunakan target rekomendasi hasil pemetaan klaster Tahap 1:
+Tabel di bawah menyajikan performa agregat model Random Forest multilabel setelah transisi ke K=12 klaster (menggunakan validasi stabilitas multi-seed):
 
-| Target Berbasis Model           | Subset Accuracy (Exact Match Ratio) | F1-Score (Micro) | F1-Score (Macro) |
+| Target Berbasis Model | Subset Accuracy (Exact Match Ratio) | F1-Score (Micro) | F1-Score (Macro) |
 | :------------------------------ | :---------------------------------: | :--------------: | :--------------: |
-| **Target GMM (22 Klaster)**     |             **84.77%**              |      0.9404      |      0.9489      |
-| **Target K-Means (22 Klaster)** |               81.36%                |    **0.9537**    |    **0.9557**    |
+| **Target GMM (12 Klaster)**     |         **89.70% ± 2.21%**          | **0.9662 ± 0.0079** | **0.9657 ± 0.0108** |
+| **Target K-Means (12 Klaster)** |          84.02% ± 3.45%           | 0.9639 ± 0.0057  | 0.9566 ± 0.0074  |
 
 ---
 

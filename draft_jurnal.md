@@ -1,7 +1,6 @@
 # DRAF PENULISAN JURNAL ILMIAH (TARGET: SINTA 3)
 
-**"Comparative Study of Clustering Hybrid Pipelines for Multi-Label Crop Recommendation"**  
-_(Studi Komparatif Pipa Klasterisasi Hibrida untuk Rekomendasi Tanaman Multilabel)_
+**"Comparative Hybrid Clustering-Classification Pipeline Using K-Means and GMM for Multi-Label Crop Recommendation"**
 
 ---
 
@@ -29,20 +28,20 @@ Tantangan utama dalam menerapkan pembelajaran terawasi multilabel pada sektor pe
 
 ### 1.3 Celah Penelitian (Research Gap) dan Kebaruan (Novelty)
 
-Beberapa penelitian terdahulu di bidang rekomendasi tanaman tumpang sari umumnya hanya menggunakan satu pendekatan klasterisasi kaku seperti K-Means untuk pemetaan wilayah saja [7], atau berhenti pada tahap pengelompokan wilayah tanpa pemodelan prediktif klasifikasi [6], [7]. Selain itu, riset-riset tersebut kerap mengabaikan pengaruh pra-pemrosesan data seperti eliminasi pencilan (_outliers_) yang secara statistik sering disingkirkan sebagai derau (_noise_), padahal pencilan tersebut merepresentasikan kondisi tanah ekstrem bagi komoditas khusus bernilai ekonomi tinggi [3], [8]. Hal ini menciptakan celah penelitian (_research gap_) mengenai perbandingan efektivitas antara berbagai paradigma klasterisasi dan pengaruh preservasi pencilan terhadap keutuhan informasi agronomi.
+Beberapa penelitian terdahulu di bidang rekomendasi tanaman umumnya hanya menghasilkan rekomendasi satu komoditas tunggal (_single-label_) tanpa mempertimbangkan kompatibilitas multi-komoditas lahan secara ekologis [6], [7]. Riset serupa yang memanfaatkan klasterisasi hanya menggunakannya sebagai eksplorasi deskriptif, bukan sebagai generator label otomatis untuk klasifikasi prediktif [6]. Selain itu, beberapa studi juga menerapkan eliminasi pencilan (_outliers_) global menggunakan metode IQR yang secara statistik menghapus data tanaman berkebutuhan ekstrem bernilai ekonomi tinggi seperti apel dan anggur [7], [8]. Hal ini menciptakan celah penelitian (_research gap_) mengenai (1) perbandingan efektivitas paradigma klasterisasi kaku dan lunak sebagai generator label multilabel, dan (2) pengaruh kebijakan preservasi pencilan terhadap keutuhan informasi agronomi.
 
 Untuk memperjelas celah penelitian (_research gap_) tersebut, ringkasan perbandingan studi literatur terdahulu dengan pendekatan yang diusulkan disajikan pada Tabel 1 di bawah ini:
 
 **Tabel 1. Perbandingan Penelitian Terdahulu dan Penelitian yang Diusulkan**
 
-| Author (Year)                     | Method                                   | Output                             | Limitation / Gap                                                                                                                                                                                         |
-| :-------------------------------- | :--------------------------------------- | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Savla et al. [6] (2022)**       | Random Forest, Decision Tree, SVM        | Single-label Crop Recommendation   | Hanya mendukung rekomendasi satu jenis komoditas tunggal (_single-label_), mengabaikan kompatibilitas multi-komoditas lahan secara ekologis.                                                             |
-| **Purba et al. [7] (2022)**       | K-Means Clustering                       | Soil Zone Mapping                  | Berhenti pada pemetaan zona tanah tanpa adanya pemodelan prediktif klasifikasi lanjutan untuk rekomendasi komoditas spesifik.                                                                            |
-| **Karthikeyan et al. [8] (2020)** | Decision Tree, Naive Bayes               | Crop Recommendation (Single-label) | Menerapkan eliminasi pencilan global (IQR), menyebabkan tanaman berkebutuhan ekstrem seperti apel dan anggur menghilang dari sistem.                                                                     |
-| **Penelitian Ini (Proposed)**     | **PCA + K-Means vs GMM + Multilabel RF** | **Multilabel Crop Recommendation** | Menyelesaikan _single-label constraint_, membandingkan paradigma klasterisasi kaku dan lunak (_hard/soft clustering_), serta mempertahankan pencilan (_outlier preservation_) untuk keberagaman tanaman. |
+| Author (Year)                  | Method                                                                | Output                                                  | Limitation / Gap                                                                                                                                                                                         |
+| :----------------------------- | :-------------------------------------------------------------------- | :------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Srinivas et al. [6] (2026)** | Logistic Regression, Random Forest, K-Means, Agglomerative Clustering | Single-label Crop Recommendation + Cluster Segmentation | Clustering digunakan sebagai eksplorasi deskriptif saja (K=4), bukan generator label prediktif; output tetap _single-label_, tidak ada evaluasi dampak klasterisasi ke downstream classifier.            |
+| **Abdullah et al. [7] (2025)** | Decision Tree, Random Forest, XGBoost                                 | Single-label Crop Recommendation                        | Menerapkan eliminasi pencilan global (IQR) yang menghapus 16,09% data; tanaman berkebutuhan ekstrem seperti apel dan anggur (K>200 mg/kg) berpotensi hilang dari sistem; tidak ada klasterisasi.         |
+| **Garg & Alam [8] (2023)**     | IBk (KNN), MLP, CDT, REP Tree, PART                                   | Single-label Crop Recommendation                        | Output hanya satu rekomendasi per lahan (_single-label_); tidak mengintegrasikan klasterisasi sebagai generator label; tidak ada analisis outlier sensitif terhadap komoditas spesifik.                  |
+| **Penelitian Ini (Proposed)**  | **PCA + K-Means vs GMM + Multilabel RF**                              | **Multilabel Crop Recommendation**                      | Menyelesaikan _single-label constraint_, membandingkan paradigma klasterisasi kaku dan lunak (_hard/soft clustering_), serta mempertahankan pencilan (_outlier preservation_) untuk keberagaman tanaman. |
 
-Kontribusi utama penelitian ini terletak pada tiga aspek yang saling melengkapi. Pipeline dua tahap yang diusulkan mengintegrasikan reduksi dimensi PCA dengan klasterisasi tidak terawasi sebagai generator label otomatis — mengeliminasi kebutuhan anotasi manual multilabel yang mahal [14]. Lebih lanjut, evaluasi komparatif antara K-Means dan GMM dilakukan tidak hanya pada metrik klasterisasi konvensional, tetapi juga pada dampaknya terhadap kualitas label target di tahap supervisi [15]. Terakhir, justifikasi empiris terhadap kebijakan pemeliharaan pencilan disajikan melalui analisis kuantitatif kehilangan data per komoditas, menunjukkan bahwa penghapusan pencilan (_outlier_) statistik global bersifat destruktif bagi taksonomi komoditas berkebutuhan ekstrem.
+Kontribusi utama penelitian ini terletak pada tiga aspek yang saling melengkapi. Pipeline dua tahap yang diusulkan mengintegrasikan reduksi dimensi PCA dengan klasterisasi tidak terawasi sebagai generator label otomatis, yang mengeliminasi kebutuhan anotasi manual multilabel yang mahal [14]. Lebih lanjut, evaluasi komparatif antara K-Means dan GMM dilakukan tidak hanya pada metrik klasterisasi konvensional, tetapi juga pada dampaknya terhadap kualitas label target di tahap supervisi [15]. Terakhir, justifikasi empiris terhadap kebijakan pemeliharaan pencilan disajikan melalui analisis kuantitatif kehilangan data per komoditas, menunjukkan bahwa penghapusan pencilan (_outlier_) statistik global bersifat destruktif bagi taksonomi komoditas berkebutuhan ekstrem.
 
 ### 1.4 Rumusan Masalah dan Tujuan Penelitian
 
@@ -76,7 +75,7 @@ Metode dirancang dalam dua fase utama:
 **Fase 1: Klasterisasi Karakteristik Lahan (Unsupervised)**
 
 1. **Pengumpulan & Preprocessing Data:** Menggunakan _Crop Recommendation Dataset_ (2.200 sampel) dengan standardisasi fitur menggunakan `StandardScaler`. Kebijakan pemeliharaan outlier diterapkan untuk mempertahankan tanaman berkebutuhan ekstrem.
-2. **Feature Engineering (Reduksi Dimensi):** Menerapkan PCA 5-komponen untuk kompresi informasi (~89% variansi kumulatif) dan PCA 2-komponen untuk kebutuhan visualisasi.
+2. **Feature Engineering (Reduksi Dimensi):** Menerapkan PCA 5-komponen untuk kompresi informasi (87,58% variansi kumulatif) dan PCA 2-komponen untuk kebutuhan visualisasi.
 3. **Pemodelan Klaster Komparatif ($K=12$):** Membandingkan dua model dengan pendekatan matematika berbeda:
     - **K-Means**: Mewakili pendekatan klasterisasi kaku (_hard clustering_) berbasis Jarak Geometris (Centroid-based).
     - **Gaussian Mixture Model (GMM)**: Mewakili pendekatan klasterisasi lunak (_soft clustering_) berbasis Distribusi Probabilitas (Distribution-based).
@@ -146,7 +145,7 @@ Metode _Principal Component Analysis_ (PCA) [19] digunakan untuk menyusutkan dat
 
 Algoritma K-Means merupakan pendekatan klasterisasi kaku yang meminimalkan inersia kuadrat jarak Euclidean centroid. Konfigurasi hyperparameter yang digunakan:
 
-- **n_clusters:** 12. Pemilihan jumlah klaster ini didasarkan pada analisis kestabilan multi-komoditas dan kurva kriteria informasi (BIC). Meskipun dataset memiliki 22 jenis tanaman aktual, pengelompokan menjadi 12 klaster ($K=12$) terbukti optimal untuk sistem rekomendasi multilabel karena menyatukan tanaman dengan kecocokan agronomi yang serupa (misalnya apel dan anggur) ke dalam klaster yang sama. Hal ini meminimalkan fragmentasi spasial data homogen dan menghasilkan label target biner yang lebih kokoh untuk tahap klasifikasi terawasi.
+- **n_clusters:** 12. Pemilihan jumlah klaster ini didasarkan pada analisis kestabilan multi-komoditas dan kurva evaluasi kriteria informasi (BIC) yang disajikan pada **Gambar 5**. Meskipun dataset memiliki 22 jenis tanaman aktual, pengelompokan menjadi 12 klaster ($K=12$) terbukti optimal untuk sistem rekomendasi multilabel karena menyatukan tanaman dengan kecocokan agronomi yang serupa (misalnya apel dan anggur) ke dalam klaster yang sama. Hal ini meminimalkan fragmentasi spasial data homogen dan menghasilkan label target biner yang lebih kokoh untuk tahap klasifikasi terawasi.
 - **init:** `'k-means++'` (untuk inisialisasi centroid awal yang tersebar optimal guna mempercepat konvergensi).
 - **n_init:** 10 (algoritma dijalankan 10 kali secara independen dengan centroid acak untuk memilih hasil dengan inersia terendah).
 - **max_iter:** 300 (iterasi pergeseran centroid maksimum per run).
@@ -156,18 +155,22 @@ Fungsi tujuan yang diminimalkan oleh K-Means dirumuskan secara formal pada **Per
 
 #### 4. Model Gaussian Mixture Model (GMM)
 
-Gaussian Mixture Model memodelkan data sebagai kombinasi linier dari beberapa distribusi Gaussian multivariat. Konfigurasi yang diterapkan:
+Gaussian Mixture Model (GMM) memodelkan data sebagai kombinasi linier dari beberapa distribusi Gaussian multivariat berdasarkan teori Finite Mixture Models [11]. Konfigurasi yang diterapkan:
 
-- **n_components:** 12 (jumlah komponen disamakan dengan $K=12$ klaster K-Means demi konsistensi komparasi batas keputusan).
+- **n_components:** 12 (jumlah komponen disamakan dengan $K=12$ klaster K-Means demi konsistensi komparasi batas keputusan yang didukung oleh analisis kurva kriteria informasi BIC pada **Gambar 5**).
 - **covariance_type:** `'full'` (setiap komponen memiliki matriks kovariansi bebas sendiri, memungkinkan klaster berbentuk elipsoid miring tak beraturan).
-- **n_init:** 1 (jumlah inisialisasi parameter algoritma Expectation-Maximization. Nilai `n_init=1` memadai karena Scikit-Learn secara default menginisialisasi parameter GMM menggunakan centroid hasil algoritma K-Means (`init_params='kmeans'`). Karena K-Means sebelumnya dijalankan kokoh dengan `n_init=10` untuk menemukan pusat klaster terbaik, trajectory EM langsung dimulai dari koordinat spasial yang terstruktur secara optimal, bukan parameter acak mentah. Ditambah penguncian `random_state=42`, hasil klasterisasi dijamin deterministik dan stabil).
+- **n_init:** 1 (jumlah inisialisasi parameter algoritma Expectation-Maximization. Nilai `n_init=1` memadai karena pustaka Scikit-Learn [20] secara default menginisialisasi parameter GMM menggunakan centroid hasil algoritma K-Means (`init_params='kmeans'`). Karena K-Means sebelumnya dijalankan kokoh dengan `n_init=10` untuk menemukan pusat klaster terbaik, trajectory EM langsung dimulai dari koordinat spasial yang terstruktur secara optimal, bukan parameter acak mentah. Ditambah penguncian `random_state=42`, hasil klasterisasi dijamin deterministik dan stabil).
 - **random_state:** 42 (untuk konsistensi inisialisasi parameter probabilistik).
 
-Model GMM dioptimalkan menggunakan algoritma _Expectation-Maximization_ (EM) untuk memaksimalkan fungsi log-likelihood data yang dirumuskan pada **Persamaan (2)**.
+Model GMM dioptimalkan menggunakan algoritma _Expectation-Maximization_ (EM) [10] untuk memaksimalkan fungsi log-likelihood data yang dirumuskan pada **Persamaan (2)**.
+
+- **Gambar 5: Kurva Evaluasi Parameter Klasterisasi dan Multilabel (Pencarian K Optimal)**
+  ![Gambar 5: Kurva Evaluasi Parameter Klasterisasi dan Multilabel](multilabel_k_search.png)
+  _Deskripsi:_ Grafik perbandingan metrik evaluasi klasterisasi (Silhouette Score, Davies-Bouldin Index, dan Bayesian Information Criterion) serta metrik multilabel (rerata jumlah komoditas per klaster) pada model K-Means dan GMM untuk rentang $K \in [4, 20]$. Terlihat bahwa $K=12$ memberikan titik temu optimal antara kestabilan statistik dan spesifisitas rekomendasi multilabel.
 
 #### 5. Model Random Forest (Supervised Multilabel Classifier)
 
-Pengklasifikasi multilabel diimplementasikan melalui pembungkus `MultiOutputClassifier` dengan estimator dasar `RandomForestClassifier`:
+Pengklasifikasi multilabel diimplementasikan melalui pembungkus `MultiOutputClassifier` dengan estimator dasar `RandomForestClassifier` berbasis algoritma Random Forest [9]:
 
 - **n_estimators:** 100 (jumlah pohon keputusan di dalam model forest).
 - **max_depth:** `None` (pohon tumbuh bebas hingga seluruh daun murni atau menampung sampel kurang dari batas minimum pembelahan. Kebijakan ini bertujuan untuk menekan bias klasifikasi pada data latih dengan Train Subset Accuracy mencapai 100,00%. Meskipun terdapat selisih sekitar 15% hingga 19% terhadap Test Subset Accuracy (~84% s.d. 85%), model menunjukkan indikasi overfitting moderat yang masih dapat ditoleransi karena performa pengujian tetap stabil pada berbagai konfigurasi kedalaman dengan dukungan regularisasi bawaan Random Forest (seperti bagging dan pemilihan fitur acak) yang menjaga kemampuan generalisasi).
@@ -176,7 +179,7 @@ Pengklasifikasi multilabel diimplementasikan melalui pembungkus `MultiOutputClas
 #### 6. Pembagian Data (Split Data)
 
 - **Rasio Train/Test:** 80:20 (80% atau 1.760 data digunakan sebagai data latih dan 20% atau 440 data sebagai data uji klasifikasi).
-- **Stratifikasi:** _Tidak stratified_. Karena target merupakan matriks biner multilabel (multi-hot encoding), scikit-learn secara default tidak mendukung stratifikasi silang langsung pada matriks multidimensi tanpa algoritma stratifikasi berulang khusus (_iterative stratification_). Oleh sebab itu, pemisahan acak acuan statis (`random_state=42`) diterapkan.
+- **Stratifikasi:** _Tidak stratified_. Karena target merupakan matriks biner multilabel (multi-hot encoding), pustaka scikit-learn [20] secara default tidak mendukung stratifikasi silang langsung pada matriks multidimensi tanpa algoritma stratifikasi berulang khusus (_iterative stratification_). Oleh sebab itu, pemisahan acak acuan statis (`random_state=42`) diterapkan.
 
 #### 7. Lingkungan Pengembangan (Development Environment)
 
@@ -197,7 +200,7 @@ Pustaka pendukung lainnya meliputi Pandas versi 2.3.3 untuk manipulasi data, Num
 
 Untuk mendukung transparansi dan reproduksibilitas eksperimen, berikut adalah formulasi matematis dari setiap metrik evaluasi yang digunakan:
 
-**Persamaan 1 — K-Means Objective Function (Inertia):**
+**Persamaan 1. K-Means Objective Function (Inertia):**
 
 Algoritma K-Means meminimalkan jumlah kuadrat jarak dalam klaster (_within-cluster sum of squares_ / WCSS) sesuai dengan Persamaan (1):
 
@@ -205,7 +208,7 @@ $$J = \sum_{k=1}^{K} \sum_{\mathbf{x}_i \in C_k} \|\mathbf{x}_i - \boldsymbol{\m
 
 di mana $\mathbf{x}_i \in \mathbb{R}^5$ adalah vektor koordinat sampel ke-$i$ pada ruang komponen utama PCA (5D), $C_k$ adalah himpunan sampel pada klaster ke-$k$, $\boldsymbol{\mu}_k$ adalah vektor centroid klaster ke-$k$, dan $K=12$ adalah jumlah klaster.
 
-**Persamaan 2 — GMM Log-Likelihood (EM Objective):**
+**Persamaan 2. GMM Log-Likelihood (EM Objective):**
 
 GMM mengoptimalkan log-likelihood dari data $\mathbf{X} = \{\mathbf{x}_1, \ldots, \mathbf{x}_N\}$ dengan $\mathbf{x}_i \in \mathbb{R}^5$ melalui algoritma Expectation-Maximization sesuai dengan Persamaan (2):
 
@@ -213,7 +216,7 @@ $$\mathcal{L}(\boldsymbol{\theta}) = \sum_{i=1}^{N} \log \sum_{k=1}^{K} \pi_k \,
 
 di mana $\pi_k$ adalah bobot campuran komponen ke-$k$ ($\sum_k \pi_k = 1$), $\boldsymbol{\mu}_k$ dan $\boldsymbol{\Sigma}_k$ adalah vektor rerata dan matriks kovariansi penuh (_full covariance_) komponen ke-$k$.
 
-**Persamaan 3 — Silhouette Score:**
+**Persamaan 3. Silhouette Score:**
 
 Silhouette Score [16] mengukur kualitas kohesi dan separasi klaster. Untuk sampel $i$ sesuai dengan Persamaan (3):
 
@@ -221,7 +224,7 @@ $$s(i) = \frac{b(i) - a(i)}{\max\{a(i),\, b(i)\}} \tag{3}$$
 
 di mana $a(i)$ adalah jarak rata-rata sampel $i$ terhadap seluruh sampel dalam klasternya sendiri, dan $b(i)$ adalah jarak rata-rata minimum terhadap klaster terdekat yang bukan klasternya. Nilai $s(i) \in [-1, 1]$; nilai mendekati 1 mengindikasikan klasterisasi yang baik. Metrik pendukung kualitas geometri klaster lainnya yaitu Davies-Bouldin Index (DBI) [17], sedangkan keselarasan partisi klaster terhadap label tanaman asli yang tersedia pada dataset (sebagai ground truth referensi biologis) diukur dengan Adjusted Rand Index (ARI) [18].
 
-**Persamaan 4 — Subset Accuracy (Exact Match Ratio):**
+**Persamaan 4. Subset Accuracy (Exact Match Ratio):**
 
 Subset Accuracy [14] mengukur proporsi sampel yang seluruh vektor label binernya diprediksi dengan tepat sesuai dengan Persamaan (4):
 
@@ -229,7 +232,7 @@ $$\text{Subset Accuracy} = \frac{1}{N} \sum_{i=1}^{N} \mathbf{1}\left[\hat{\math
 
 di mana $\mathbf{y}_i \in \{0,1\}^L$ adalah vektor label ground truth, $\hat{\mathbf{y}}_i$ adalah vektor prediksi, dan $L=22$ adalah jumlah label (komoditas).
 
-**Persamaan 5 — F1-Score Multilabel (Micro-Averaged):**
+**Persamaan 5. F1-Score Multilabel (Micro-Averaged):**
 
 F1-Score Micro [13] menggabungkan True Positive (TP), False Positive (FP), dan False Negative (FN) dari seluruh label sebelum menghitung F1 sesuai dengan Persamaan (5):
 
@@ -243,7 +246,7 @@ Formulasi ini memberikan bobot proporsional pada komoditas dengan frekuensi kemu
 
 ### 3.1 Evaluasi Hasil Klasterisasi Lahan (Unsupervised)
 
-Sebelum proses klasterisasi dilakukan, analisis pencilan (_outlier analysis_) mendeteksi bahwa penerapan eliminasi pencilan IQR ($\pm 1.5 \times IQR$) secara standar pada dataset agronomi ini akan menghapus 432 baris data (19.6% dari total data). Tindakan penyaringan tersebut berakibat pada **penghapusan 100% data tanaman Anggur dan Apel**, karena secara agronomi kedua tanaman tersebut secara alamiah membutuhkan konsentrasi Kalium (K) yang sangat tinggi (>200 mg/kg) sehingga terdeteksi sebagai pencilan (_outlier_) global, sebagaimana divisualisasikan pada **Gambar 8**. Oleh karena itu, penelitian ini mempertahankan data pencilan tersebut demi menjaga keberagaman komoditas pertanian.
+Sebelum proses klasterisasi dilakukan, analisis pencilan (_outlier analysis_) mendeteksi bahwa penerapan eliminasi pencilan IQR ($\pm 1,5 \times IQR$) secara standar pada dataset agronomi ini akan menghapus 432 baris data (19,6% dari total data). Tindakan penyaringan tersebut berakibat pada **penghapusan 100% data tanaman Anggur dan Apel**, karena secara agronomi kedua tanaman tersebut secara alamiah membutuhkan konsentrasi Kalium (K) yang sangat tinggi (>200 mg/kg) sehingga terdeteksi sebagai pencilan (_outlier_) global, sebagaimana divisualisasikan pada **Gambar 9**. Oleh karena itu, penelitian ini mempertahankan data pencilan tersebut demi menjaga keberagaman komoditas pertanian.
 
 Hasil evaluasi performa klasterisasi lahan pada ruang PCA 5D menggunakan metrik Silhouette Score, Davies-Bouldin Index (DBI), dan Adjusted Rand Index (ARI) disajikan pada **Tabel 4** di bawah ini:
 
@@ -251,8 +254,8 @@ Hasil evaluasi performa klasterisasi lahan pada ruang PCA 5D menggunakan metrik 
 
 | Algoritma                        | Pendekatan Matematika                                     | Silhouette Score | Davies-Bouldin Index (DBI) | Adjusted Rand Index (ARI) | Karakteristik Rekomendasi                                                 |
 | :------------------------------- | :-------------------------------------------------------- | :--------------: | :------------------------: | :-----------------------: | :------------------------------------------------------------------------ |
-| **K-Means**                      | Klasterisasi Kaku / Hard Clustering (Centroid-based)      |    **0.324**     |         **1.084**          |           0.413           | Spasial Rigid (Hard) - Batasan klaster tegas tanpa tumpang tindih         |
-| **Gaussian Mixture Model (GMM)** | Klasterisasi Lunak / Soft Clustering (Distribution-based) |      0.286       |           1.246            |         **0.524**         | Probabilistik (Soft) - Rekomendasi berperingkat sesuai sebaran data alami |
+| **K-Means**                      | Klasterisasi Kaku / Hard Clustering (Centroid-based)      |    **0,324**     |         **1,084**          |           0,413           | Spasial Rigid (Hard) - Batasan klaster tegas tanpa tumpang tindih         |
+| **Gaussian Mixture Model (GMM)** | Klasterisasi Lunak / Soft Clustering (Distribution-based) |      0,286       |           1,246            |         **0,524**         | Probabilistik (Soft) - Rekomendasi berperingkat sesuai sebaran data alami |
 
 Berdasarkan nilai Silhouette Score dan DBI pada tabel di atas, **K-Means menghasilkan klaster dengan batasan spasial geometris yang sedikit lebih tegas** (Silhouette = 0,324, DBI = 1,084) dibanding GMM (Silhouette = 0,286, DBI = 1,246). Kompaknya klaster K-Means dapat dijelaskan secara geometris: algoritma ini meminimalkan inertia (_within-cluster sum of squares_) yang secara inheren menghasilkan batas Voronoi sferis dengan jarak Euclidean yang seragam. Namun, dari sudut pandang keselarasan pengelompokan terhadap rumpun varietas tanaman asli, **GMM mencatatkan nilai Adjusted Rand Index (ARI) lebih tinggi, yaitu 0,524** dibanding K-Means sebesar 0,413.
 
@@ -268,25 +271,25 @@ Selanjutnya, label klaster dari setiap sampel tanah ditransformasikan menjadi la
 
 Untuk memvalidasi kestabilan hasil dan menghindari ketergantungan pada satu konfigurasi partisi acak, eksperimen diulang menggunakan tiga nilai `random_state` berbeda: 0, 42, dan 99. **Tabel 5** dan **Tabel 6** menyajikan performa per seed serta nilai agregat rata-rata ± standar deviasi:
 
-**Tabel 5. Hasil per Seed — Eksperimen Stabilitas Multi-Seed**
+**Tabel 5. Hasil per Seed untuk Eksperimen Stabilitas Multi-Seed**
 
 | Seed | KM SubAcc | KM F1-Micro | KM F1-Macro | GMM SubAcc | GMM F1-Micro | GMM F1-Macro |
 | :--: | :-------: | :---------: | :---------: | :--------: | :----------: | :----------: |
-|  0   |  0.8750   |   0.9691    |   0.9610    |   0.9273   |    0.9773    |    0.9805    |
-|  42  |  0.8523   |   0.9666    |   0.9625    |   0.8750   |    0.9613    |    0.9615    |
-|  99  |  0.7932   |   0.9559    |   0.9461    |   0.8886   |    0.9599    |    0.9550    |
+|  0   |  0,8750   |   0,9691    |   0,9610    |   0,9273   |    0,9773    |    0,9805    |
+|  42  |  0,8523   |   0,9666    |   0,9625    |   0,8750   |    0,9613    |    0,9615    |
+|  99  |  0,7932   |   0,9559    |   0,9461    |   0,8886   |    0,9599    |    0,9550    |
 
 **Tabel 6. Hasil Agregat Multi-Seed (Mean ± Std)**
 
 | Model                    |   Subset Accuracy   |  F1-Score (Micro)   |  F1-Score (Macro)   |
 | :----------------------- | :-----------------: | :-----------------: | :-----------------: |
-| **K-Means (12 Klaster)** |   0.8402 ± 0.0345   |   0.9639 ± 0.0057   |   0.9566 ± 0.0074   |
-| **GMM (12 Klaster)**     | **0.8970 ± 0.0221** | **0.9662 ± 0.0079** | **0.9657 ± 0.0108** |
+| **K-Means (12 Klaster)** |   0,8402 ± 0,0345   |   0,9639 ± 0,0057   |   0,9566 ± 0,0074   |
+| **GMM (12 Klaster)**     | **0,8970 ± 0,0221** | **0,9662 ± 0,0079** | **0,9657 ± 0,0108** |
 
 **Analisis Hasil Tahap 2:**
 Hasil agregasi multi-seed mengungkap pola penting setelah transisi ke K=12 klaster:
 
-1. **Keunggulan Subset Accuracy GMM secara Rata-Rata:** Secara agregat, rata-rata Subset Accuracy GMM (89,70% ± 2,21%) secara signifikan mengungguli K-Means (84,02% ± 3,45%) dengan selisih mencapai 5,68-persen. Hal ini menunjukkan bahwa target label berbasis GMM memberikan struktur target biner yang lebih kokoh dan lebih mudah dipelajari oleh model supervised klasifikasi multilabel.
+1. **Keunggulan Subset Accuracy GMM secara Rata-Rata:** Secara agregat, rata-rata Subset Accuracy GMM (89,70% ± 2,21%) secara konsisten lebih tinggi dibandingkan K-Means (84,02% ± 3,45%) dengan selisih mencapai 5,68-persen. Hal ini menunjukkan bahwa target label berbasis GMM memberikan struktur target biner yang lebih kokoh dan lebih mudah dipelajari oleh model supervised klasifikasi multilabel.
 2. **GMM Unggul Konsisten pada Seluruh Metrik:** Berbeda dengan konfigurasi K=22, pada konfigurasi K=12 GMM secara konsisten mengungguli K-Means pada F1-Score Micro (0,9662 vs 0,9639) dan F1-Score Macro (0,9657 vs 0,9566). Kestabilan ini mengonfirmasi bahwa GMM menghasilkan partisi tanah yang lebih berselaras secara biologis, meminimalkan misklasifikasi pada tanaman berkebutuhan serupa.
 
 #### 3.2.1 Validitas Desain Evaluasi: Justifikasi terhadap Potensi Circular Evaluation
@@ -305,9 +308,9 @@ Validitas desain ini diperkuat oleh dua bukti kuantitatif:
 | **Adjusted Rand Index** (vs. GT) |    0,413    |    **0,524**     |
 | Klaster dominasi tunggal ≥ 80%   | 1/12 (8,3%) | **3/12 (25,0%)** |
 
-Kedua, analisis per klaster GMM menunjukkan bahwa beberapa klaster secara spesifik mengisolasi tanaman tunggal dengan purity tinggi, seperti **Cluster 4** (100% kidneybeans), **Cluster 6** (99.01% chickpea), dan **Cluster 11** (98.44% mothbeans). Sementara itu, klaster lainnya berhasil mengelompokkan tanaman yang kompatibel secara ekologis dengan purity berkisar ~33% hingga ~50% (contoh: Cluster 3 diisi secara berimbang oleh grapes dan apple, sedangkan Cluster 1 diisi secara berimbang oleh rice dan jute). Hal ini secara empiris mengindikasikan bahwa klaster GMM bukanlah label acak, melainkan **representasi nyata dari kelompok ekologis tanaman** dalam ruang hara tanah.
+Kedua, analisis per klaster GMM menunjukkan bahwa beberapa klaster secara spesifik mengisolasi tanaman tunggal dengan purity tinggi, seperti **Cluster 4** (100% kidneybeans), **Cluster 6** (99,01% chickpea), dan **Cluster 11** (98,44% mothbeans). Sementara itu, klaster lainnya berhasil mengelompokkan tanaman yang kompatibel secara ekologis dengan purity berkisar ~33% hingga ~50% (contoh: Cluster 3 diisi secara berimbang oleh grapes dan apple, sedangkan Cluster 1 diisi secara berimbang oleh rice dan jute). Hal ini secara empiris mengindikasikan bahwa klaster GMM bukanlah label acak, melainkan **representasi nyata dari kelompok ekologis tanaman** dalam ruang hara tanah.
 
-Dengan demikian, evaluasi Subset Accuracy dan F1-Score pada data uji 20% merupakan ukuran sahih atas kemampuan generalisasi model Random Forest dalam memprediksi keanggotaan klaster — bukan sekadar menghapal ulang label latih (_overfitting_).
+Dengan demikian, evaluasi Subset Accuracy dan F1-Score pada data uji 20% merupakan ukuran sahih atas kemampuan generalisasi model Random Forest dalam memprediksi keanggotaan klaster, bukan sekadar menghapal ulang label latih (_overfitting_).
 
 #### 3.2.2 Analisis Overfitting dan Pemangkasan Pohon (Tree Pruning)
 
@@ -333,23 +336,31 @@ Temuan ini menunjukkan bahwa model mengalami indikasi overfitting moderat yang m
 
 ### 3.3 Interpretasi Centroid & Kelompok Tanaman Multilabel
 
-Untuk menganalisis keselarasan klaster terhadap kondisi agronomi riil secara kuantitatif, nilai rerata parameter tanah (centroid) dari beberapa klaster GMM representatif diekstraksi dan disajikan pada **Tabel 9** di bawah ini:
+Untuk menganalisis keselarasan klaster terhadap kondisi agronomi riil secara kuantitatif, nilai rerata parameter tanah (centroid) dari seluruh 12 klaster GMM diekstraksi dan disajikan pada **Tabel 9** di bawah ini:
 
-**Tabel 9. Rerata Parameter Agronomi (Centroid) Klaster GMM Representatif**
+**Tabel 9. Rerata Parameter Agronomi (Centroid) Seluruh 12 Klaster GMM**
 
 |  Klaster GMM  | Asosiasi Komoditas Utama | N (mg/kg) | P (mg/kg) | K (mg/kg) | Temp (°C) | Hum (%) |  pH  | Rain (mm) | Karakteristik Lingkungan Lahan                        |
 | :-----------: | :----------------------- | :-------: | :-------: | :-------: | :-------: | :-----: | :--: | :-------: | :---------------------------------------------------- |
-| **Cluster 3** | Anggur & Apel            |   21.99   |  133.38   |  200.00   |   23.24   |  87.10  | 5.98 |   91.13   | Nutrisi P-K Ekstrem, Kelembaban Tinggi, pH Agak Masam |
-| **Cluster 1** | Padi & Yute              |   78.37   |   47.02   |   40.13   |   24.31   |  81.22  | 6.58 |  204.53   | Sawah Tropika Basah, Curah Hujan Sangat Tinggi        |
-| **Cluster 6** | Kacang Arab (_Chickpea_) |   39.83   |   67.85   |   79.32   |   18.87   |  17.06  | 7.33 |   80.19   | Lahan Kering Ekstrem, Suhu Rendah, pH Netral          |
-| **Cluster 2** | Semangka, Melon & Katun  |  105.85   |   26.95   |   39.92   |   26.08   |  85.68  | 6.59 |   52.20   | Tinggi Nitrogen, Rendah Fosfor, Curah Hujan Rendah    |
-| **Cluster 4** | Kacang Merah             |   20.75   |   67.54   |   20.05   |   20.12   |  21.61  | 5.75 |  105.92   | Kelembaban Rendah, Nitrogen Rendah                    |
+| **Cluster 0** | Kacang Hijau, Kacang Hitam, Miju-miju | 26,46 | 61,13 | 19,57 | 27,70 | 71,61 | 6,94 | 54,18 | Lahan Kering Tropis, Nitrogen Rendah, Curah Hujan Rendah |
+| **Cluster 1** | Padi & Yute              |   78,37   |   47,02   |   40,13   |   24,31   |  81,22  | 6,58 |  204,53   | Sawah Tropika Basah, Curah Hujan Sangat Tinggi        |
+| **Cluster 2** | Semangka, Melon & Katun  |  105,85   |   26,95   |   39,92   |   26,08   |  85,68  | 6,59 |   52,20   | Nitrogen Sangat Tinggi, Kelembaban Tinggi, Curah Hujan Rendah |
+| **Cluster 3** | Anggur & Apel            |   21,99   |  133,38   |  200,00   |   23,24   |  87,10  | 5,98 |   91,13   | Nutrisi P-K Ekstrem, Kelembaban Tinggi, pH Agak Masam |
+| **Cluster 4** | Kacang Merah             |   20,75   |   67,54   |   20,05   |   20,12   |  21,61  | 5,75 |  105,92   | Kelembaban Sangat Rendah, Nitrogen Rendah, pH Agak Masam |
+| **Cluster 5** | Kelapa & Pepaya          |   31,23   |   32,94   |   37,14   |   29,92   |  93,89  | 6,25 |  179,85   | Lahan Pesisir/Suhu Tinggi, Kelembaban Sangat Tinggi   |
+| **Cluster 6** | Kacang Arab (_Chickpea_) |   39,83   |   67,85   |   79,32   |   18,87   |  17,06  | 7,33 |   80,19   | Lahan Kering Ekstrem, Suhu Rendah, pH Netral          |
+| **Cluster 7** | Mangga & Kacang Tunggak  |   20,08   |   46,77   |   24,52   |   29,35   |  49,43  | 5,59 |  110,97   | Suhu Tinggi, Kelembaban Moderat-Rendah, pH Agak Masam |
+| **Cluster 8** | Kopi & Delima            |   51,36   |   24,91   |   28,16   |   22,72   |  77,75  | 6,68 |  126,09   | Lahan Sedang/Transisi, Nitrogen Sedang, Kelembaban Moderat |
+| **Cluster 9** | Pepaya & Jeruk           |   36,59   |   37,85   |   31,01   |   32,45   |  92,23  | 6,92 |   93,24   | Suhu Sangat Tinggi, Kelembaban Sangat Tinggi, pH Netral |
+| **Cluster 10**| Pisang & Jagung          |   90,78   |   67,46   |   37,33   |   25,02   |  73,96  | 6,06 |   93,29   | Lahan Subur (N-P Tinggi), Kelembaban Moderat          |
+| **Cluster 11**| Kacang Ngengat (_Mothbeans_) | 23,25 |   47,58   |   20,00   |   27,99   |  53,52  | 7,94 |   52,28   | pH Basa (Alkalin) Moderat, Curah Hujan Rendah         |
 
 Analisis kuantitatif pada **Tabel 9** menunjukkan bahwa pembagian klaster GMM memiliki dasar agronomi yang kuat:
 
 1. **Klaster Nutrisi Ekstrem (Cluster 3):** GMM berhasil mengisolasi profil tanah dengan kadar fosfor (P ≈ 133) dan kalium (K ≈ 200) yang luar biasa tinggi secara alami. Kadar kalium ini 5 kali lipat dari rata-rata tanaman biasa, menggabungkan apel dan anggur ke dalam klaster ekologis yang sama.
 2. **Klaster Sawah Tropika Basah (Cluster 1):** Menunjukkan kebutuhan curah hujan tinggi (>200 mm) dengan nitrogen tinggi-sedang, yang sangat cocok untuk padi sawah dan yute (_jute_).
-3. **Klaster Lahan Kering Ekstrem (Cluster 6):** Berhasil memetakan daerah dengan kelembaban udara terendah (17.06%), yang merupakan habitat tumbuh optimal kacang arab (_chickpea_).
+3. **Klaster Lahan Kering Ekstrem (Cluster 6):** Berhasil memetakan daerah dengan kelembaban udara terendah (17,06%), yang merupakan habitat tumbuh optimal kacang arab (_chickpea_).
+4. **Klaster Kandungan Nitrogen Sangat Tinggi (Cluster 2):** Mengelompokkan komoditas penikmat nitrogen tinggi seperti semangka, melon, dan katun (N ≈ 105,85) dengan curah hujan relatif rendah.
 
 ### 3.4 Tinjauan Hasil & Pembahasan (Results & Discussion Review)
 
@@ -363,36 +374,36 @@ Analisis kuantitatif pada **Tabel 9** menunjukkan bahwa pembagian klaster GMM me
 
 Hasil pemetaan spasial dan perbandingan ukuran klaster diilustrasikan pada gambar di bawah ini:
 
-- **Gambar 5: PCA Scatter Plot K-Means**
-  ![Gambar 5: PCA Scatter Plot K-Means](kmeans_pca_scatter.png)
+- **Gambar 6: PCA Scatter Plot K-Means**
+  ![Gambar 6: PCA Scatter Plot K-Means](kmeans_pca_scatter.png)
   _Deskripsi:_ Distribusi spasial hasil klasterisasi K-Means menunjukkan pembagian wilayah bulat sferis yang memotong paksa kontinuitas kepadatan elipsoid tanaman asli.
 
-- **Gambar 6: PCA Scatter Plot GMM**
-  ![Gambar 6: PCA Scatter Plot GMM](gmm_pca_scatter.png)
+- **Gambar 7: PCA Scatter Plot GMM**
+  ![Gambar 7: PCA Scatter Plot GMM](gmm_pca_scatter.png)
   _Deskripsi:_ Distribusi spasial hasil GMM memperlihatkan kemampuan adaptasi bentuk klaster elipsoid miring yang saling tumpang-tindih secara alami sesuai persebaran data riil.
 
-- **Gambar 7: Perbandingan Distribusi Ukuran Klaster (Cluster Size Distribution)**
-  ![Gambar 7: Perbandingan Distribusi Ukuran Klaster](cluster_distribution.png)
+- **Gambar 8: Perbandingan Distribusi Ukuran Klaster (Cluster Size Distribution)**
+  ![Gambar 8: Perbandingan Distribusi Ukuran Klaster](cluster_distribution.png)
   _Deskripsi:_ K-Means memaksakan persebaran ukuran klaster yang seragam dan kaku, sedangkan GMM menghasilkan sebaran ukuran klaster yang dinamis dan adaptif terhadap kepadatan riil data (misal, Klaster 0 mencapai 170 sampel).
 
-- **Gambar 8: Boxplot Perbandingan Kalium Sebelum & Setelah IQR Removal**
-  ![Gambar 8: Boxplot Perbandingan Kalium Sebelum & Setelah IQR Removal](outlier_comparison.png)
+- **Gambar 9: Boxplot Perbandingan Kalium Sebelum & Setelah IQR Removal**
+  ![Gambar 9: Boxplot Perbandingan Kalium Sebelum & Setelah IQR Removal](outlier_comparison.png)
   _Deskripsi:_ Perbandingan sebaran hara Kalium (K) sebelum (Kiri) dan setelah (Kanan) penghapusan pencilan global berbasis IQR ($K > 92,5$ mg/kg). Terlihat bahwa setelah pembersihan pencilan global, seluruh data untuk komoditas Apel dan Anggur terhapus total dari dataset karena kebutuhan alami kadar hara kaliumnya yang tinggi.
 
-- **Gambar 9: Heatmap Komposisi Klaster K-Means**
-  ![Gambar 9: Heatmap Komposisi Klaster K-Means](kmeans_heatmap.png)
-  _Deskripsi:_ Heatmap ini menggambarkan persebaran komoditas tanaman di seluruh klaster K-Means. Terlihat beberapa tanaman terfragmentasi ke banyak klaster (misalnya _pigeonpeas_ tersebar di 9 klaster berbeda).
+- **Gambar 10: Heatmap Komposisi Klaster K-Means**
+  ![Gambar 10: Heatmap Komposisi Klaster K-Means](kmeans_heatmap.png)
+  _Deskripsi:_ Heatmap ini menggambarkan persebaran komoditas tanaman di seluruh klaster K-Means. Terlihat beberapa tanaman terfragmentasi ke banyak klaster (misalnya _pigeonpeas_ tersebar di 6 klaster berbeda).
 
-- **Gambar 10: Heatmap Komposisi Klaster GMM**
-  ![Gambar 10: Heatmap Komposisi Klaster GMM](gmm_heatmap.png)
-  _Deskripsi:_ Heatmap GMM menunjukkan konsentrasi tanaman yang jauh lebih kompak pada klaster tertentu (maksimal hanya menyebar di 3 klaster), merefleksikan keselarasan dengan kelompok asosiasi tanaman asli.
+- **Gambar 11: Heatmap Komposisi Klaster GMM**
+  ![Gambar 11: Heatmap Komposisi Klaster GMM](gmm_heatmap.png)
+  _Deskripsi:_ Heatmap GMM menunjukkan konsentrasi tanaman yang jauh lebih kompak pada klaster tertentu (maksimal hanya menyebar di 4 klaster), merefleksikan keselarasan dengan kelompok asosiasi tanaman asli.
 
-- **Gambar 11: Bar Chart Perbandingan Performa Klasifikasi Multilabel (K-Means vs GMM)**
-  ![Gambar 11: Bar Chart Perbandingan Performa Klasifikasi Multilabel](model_comparison_bar.png)
-  _Deskripsi:_ Grafik batang perbandingan performa klasifikasi multilabel Tahap 2, menunjukkan keunggulan GMM pada Subset Accuracy (84,77%) dan keunggulan tipis K-Means pada F1-Score Micro (95,37%) dan Macro (95,57%).
+- **Gambar 12: Bar Chart Perbandingan Performa Klasifikasi Multilabel (K-Means vs GMM)**
+  ![Gambar 12: Bar Chart Perbandingan Performa Klasifikasi Multilabel](model_comparison_bar.png)
+  _Deskripsi:_ Grafik batang perbandingan performa klasifikasi multilabel Tahap 2, menunjukkan keunggulan GMM secara konsisten pada seluruh metrik pengujian rata-rata, yaitu Subset Accuracy (89,70% vs. K-Means 84,02%), F1-Score Micro (0,9662 vs. K-Means 0,9639), dan F1-Score Macro (0,9657 vs. K-Means 0,9566).
 
-- **Gambar 12: Multilabel Confusion Matrix per Komoditas (GMM Target Pipeline)**
-  ![Gambar 12: Multilabel Confusion Matrix per Komoditas](multilabel_confusion_matrix.png)
+- **Gambar 13: Multilabel Confusion Matrix per Komoditas (GMM Target Pipeline)**
+  ![Gambar 13: Multilabel Confusion Matrix per Komoditas](multilabel_confusion_matrix.png)
   _Deskripsi:_ Grid matriks konfusi multilabel biner untuk 22 komoditas tanaman pada data uji, menunjukkan jumlah True Positive (TP), False Positive (FP), False Negative (FN), dan True Negative (TN) untuk setiap komoditas secara individual.
 
 #### 3. Analisis Galat (Error Analysis)
@@ -412,8 +423,8 @@ Evaluasi mendalam terhadap hasil prediksi model klasifikasi terawasi multilabel 
 ### 4.1 Kesimpulan
 
 1. Rancang bangun sistem rekomendasi komoditas pertanian multilabel diimplementasikan melalui pendekatan pembelajaran dua tahap: klasterisasi tidak terawasi (_unsupervised_) diikuti klasifikasi terawasi multilabel (_supervised multilabel_).
-2. Perbandingan antara klasterisasi kaku atau _hard clustering_ (K-Means) dan klasterisasi lunak atau _soft clustering_ (GMM) menunjukkan **GMM menghasilkan keselarasan yang lebih tinggi dengan pengelompokan tanaman asli** dengan nilai Adjusted Rand Index (ARI) mencapai 0,816 dibanding K-Means yang sebesar 0,519. Di sisi lain, K-Means menghasilkan klaster dengan batasan spasial geometris yang lebih kompak dengan Silhouette Score 0,307 (GMM 0,230) dan Davies-Bouldin Index 1,081 (GMM 1,716).
-3. Evaluasi pada tahap kedua menunjukkan keberhasilan pemanfaatan hasil klasterisasi sebagai target multilabel, di mana target berbasis GMM menghasilkan Subset Accuracy (Exact Match) tertinggi sebesar **84,77%** (berbanding K-Means **81,36%**), sedangkan target berbasis K-Means unggul pada F1-Score Micro sebesar **0,9537** (berbanding GMM **0,9404**).
+2. Perbandingan antara klasterisasi kaku atau _hard clustering_ (K-Means) dan klasterisasi lunak atau _soft clustering_ (GMM) menunjukkan **GMM menghasilkan keselarasan yang lebih tinggi dengan pengelompokan tanaman asli** dengan nilai Adjusted Rand Index (ARI) mencapai 0,524 dibanding K-Means yang sebesar 0,413. Di sisi lain, K-Means menghasilkan klaster dengan batasan spasial geometris yang lebih kompak dengan Silhouette Score 0,324 (GMM 0,286) dan Davies-Bouldin Index 1,084 (GMM 1,246).
+3. Evaluasi pada tahap kedua menunjukkan keberhasilan pemanfaatan hasil klasterisasi sebagai target multilabel, di mana target berbasis GMM menghasilkan rata-rata Subset Accuracy (Exact Match) tertinggi sebesar **89,70%** (berbanding K-Means **84,02%**), serta unggul pada rata-rata F1-Score Micro sebesar **0,9662** (berbanding K-Means **0,9639**) dan F1-Score Macro sebesar **0,9657** (berbanding K-Means **0,9566**).
 4. Kebijakan pemeliharaan pencilan (_outlier preservation_) menunjukkan peran krusial untuk mencegah hilangnya taksonomi tanaman bernilai tinggi (seperti apel dan anggur) yang membutuhkan konsentrasi hara tanah yang ekstrem.
 
 ### 4.2 Saran dan Batasan Riset
@@ -427,21 +438,21 @@ Evaluasi mendalam terhadap hasil prediksi model klasifikasi terawasi multilabel 
 
 ## 5. DAFTAR PUSTAKA
 
-[1] T. Anitha and D. Sathyabama, "Analysis of soil data using data mining classification techniques," _International Journal of Computer Science and Engineering_, vol. 6, no. 5, pp. 89–94, 2018.
+[1] S. Sappe, A. M. Kandari, and M. A. Limonu, "Land suitability assessment for agricultural crops in Enrekang, Indonesia: combination of principal component analysis and fuzzy methods," _Sains Tanah - Journal of Soil Science and Agroclimatology_, vol. 21, no. 1, pp. 110–125, 2024, doi: 10.20961/stjssa.v21i1.79090.
 
 [2] V. Pudumalar, E. Ramanujam, R. H. Rajashree, C. Kavya, T. Kiruthika, and J. Nisha, "Crop recommendation system for precision agriculture," _Proc. 8th IEEE Int. Conf. on Advanced Computing_, pp. 32–36, 2017, doi: 10.1109/IACC.2017.0017.
 
 [3] A. Mucherino, P. J. Papajorgji, and P. M. Pardalos, _Data Mining in Agriculture_. New York: Springer Science & Business Media, 2009.
 
-[4] S. S. Dahikar and S. V. Rode, "Agricultural crop selection using machine learning approach," _Int. Journal of Innovative Science, Engineering & Technology_, vol. 1, no. 2, pp. 11–16, 2014.
+[4] S. Yadav, H. K. Singh, A. Garg, and M. M. Khan, "Comparative Analysis of Machine Learning Approaches for Crop Recommendation in Sustainable Agriculture in India," in _Proc. Int. Conf. on Intelligent Systems for a Sustainable Future (ISSF)_, Atlantis Press, 2026, doi: 10.2991/978-94-6463-529-4.
 
-[5] M. Kuhn and K. Johnson, _Applied Predictive Modeling_. New York: Springer, 2013, doi: 10.1007/978-1-4614-6849-3.
+[5] P. Utama, H. Hermita, and D. P. Angelina, "Evaluation of land suitability for plantation crops and medicinal plants in the intercropping system in Ciomas District, Serang Regency," _Agribusiness Journal_, vol. 16, no. 1, pp. 24–33, 2022, doi: 10.15408/aj.v16i1.28198.
 
-[6] A. Savla, P. Dhawan, H. Katta, D. Jaswal, and V. Ramesh, "Analysis of supervised and unsupervised machine learning approaches in crop recommendation," _Lecture Notes in Networks and Systems_, vol. 471, pp. 197–213, 2022, doi: 10.1007/978-981-19-2538-2_17.
+[6] I. V. Srinivas, M. Dhotay, J. Sridevi, R. Sanwal, and N. Jain, "Utilizing Supervised and Unsupervised Machine Learning Techniques for Crop Yield Prediction, Pest Detection, And Precision Farming," _Journal of International Commerce Law and Technology_, vol. 7, no. 1, pp. 660–669, 2026.
 
-[7] A. Purba, A. Mulia Lubis, and M. Syahrizal, "Penerapan metode K-Means clustering untuk pengelompokan wilayah berdasarkan karakter tanah," _Jurnal Ilmiah Infotek_, vol. 7, no. 1, pp. 1–9, 2022.
+[7] A. Abdullah, M. Iwan, and S. R. Dani, "Applying Tree Based Model for Crop Recommendation System Based on Soil Parameters and Weather Conditions," _JITK (Jurnal Ilmu Pengetahuan dan Teknologi Komputer)_, 2025.
 
-[8] L. Karthikeyan, I. Khan, A. Bhama, and B. K. Panigrahi, "A review of remote sensing applications in agriculture for food security: Crop growth and production, irrigation, and crop losses," _Journal of Hydrology_, vol. 586, p. 124905, 2020, doi: 10.1016/j.jhydrol.2020.124905.
+[8] D. Garg and M. Alam, "An effective crop recommendation method using machine learning techniques," _International Journal of Advanced Technology and Engineering Exploration (IJATEE)_, vol. 10, no. 102, pp. 498–514, 2023, doi: 10.19101/IJATEE.2022.10100456.
 
 [9] L. Breiman, "Random forests," _Machine Learning_, vol. 45, no. 1, pp. 5–32, 2001, doi: 10.1023/A:1010933404324.
 

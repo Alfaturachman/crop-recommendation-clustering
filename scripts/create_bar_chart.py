@@ -6,8 +6,8 @@ import seaborn as sns
 
 # Data for Stage 2 multilabel metrics
 metrics = ['Subset Accuracy\n(Exact Match)', 'F1-Score\n(Micro)', 'F1-Score\n(Macro)']
-kmeans_vals = [0.8136, 0.9537, 0.9557]
-gmm_vals = [0.8477, 0.9404, 0.9489]
+kmeans_vals = [0.8402, 0.9639, 0.9566]
+gmm_vals = [0.8970, 0.9662, 0.9657]
 
 x = np.arange(len(metrics))
 width = 0.35
@@ -17,8 +17,8 @@ fig, ax = plt.subplots(figsize=(10, 6))
 sns.set_theme(style="whitegrid")
 
 # Create bars
-rects1 = ax.bar(x - width/2, kmeans_vals, width, label='K-Means (22 Clusters)', color='#80b1d3')
-rects2 = ax.bar(x + width/2, gmm_vals, width, label='GMM (22 Clusters)', color='#bc80bd')
+rects1 = ax.bar(x - width/2, kmeans_vals, width, label='K-Means (12 Clusters)', color='#80b1d3')
+rects2 = ax.bar(x + width/2, gmm_vals, width, label='GMM (12 Clusters)', color='#bc80bd')
 
 # Add titles and labels
 ax.set_title('Performance Comparison of Stage 2 Multilabel Recommendation Models', fontsize=14, weight='bold', pad=15)
