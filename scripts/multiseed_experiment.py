@@ -62,7 +62,7 @@ for seed in SEEDS:
     df = df_base.copy()
 
     # ---- K-Means ----
-    kmeans = KMeans(n_clusters=22, init='k-means++', random_state=seed, n_init=10)
+    kmeans = KMeans(n_clusters=12, init='k-means++', random_state=seed, n_init=10)
     df['KMeans_Cluster'] = kmeans.fit_predict(X_pca)
     km_cluster_crops = df.groupby('KMeans_Cluster')['label'].apply(set).to_dict()
     y_ml_km = df['KMeans_Cluster'].map(km_cluster_crops).tolist()
@@ -83,7 +83,7 @@ for seed in SEEDS:
     results_km['f1_macro'].append(f1_score(y_te_km, y_pred_km, average='macro'))
 
     # ---- GMM ----
-    gmm = GaussianMixture(n_components=22, covariance_type='full', random_state=seed)
+    gmm = GaussianMixture(n_components=12, covariance_type='full', random_state=seed)
     df['GMM_Cluster'] = gmm.fit_predict(X_pca)
     gm_cluster_crops = df.groupby('GMM_Cluster')['label'].apply(set).to_dict()
     y_ml_gm = df['GMM_Cluster'].map(gm_cluster_crops).tolist()

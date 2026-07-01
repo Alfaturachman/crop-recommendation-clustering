@@ -43,7 +43,7 @@ pca = PCA(n_components=5, random_state=42)
 X_pca = pca.fit_transform(X_scaled)
 
 # 1. K-Means Targets
-kmeans = KMeans(n_clusters=22, init='k-means++', random_state=42, n_init=10)
+kmeans = KMeans(n_clusters=12, init='k-means++', random_state=42, n_init=10)
 df_base['KMeans_Cluster'] = kmeans.fit_predict(X_pca)
 km_cluster_crops = df_base.groupby('KMeans_Cluster')['label'].apply(set).to_dict()
 y_ml_km = df_base['KMeans_Cluster'].map(km_cluster_crops).tolist()
@@ -51,7 +51,7 @@ mlb_km = MultiLabelBinarizer()
 y_bin_km = mlb_km.fit_transform(y_ml_km)
 
 # 2. GMM Targets
-gmm = GaussianMixture(n_components=22, covariance_type='full', random_state=42)
+gmm = GaussianMixture(n_components=12, covariance_type='full', random_state=42)
 df_base['GMM_Cluster'] = gmm.fit_predict(X_pca)
 gm_cluster_crops = df_base.groupby('GMM_Cluster')['label'].apply(set).to_dict()
 y_ml_gm = df_base['GMM_Cluster'].map(gm_cluster_crops).tolist()
